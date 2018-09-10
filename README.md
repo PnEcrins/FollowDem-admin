@@ -31,11 +31,11 @@ CREATE EXTENSION postgis_topology;
 \q
 ```
 ```sh
-mkdir capel-venv
-cd capel-venv
+mkdir followdem-venv
+cd followdem-venv
 sudo /usr/bin/pip3 install virtualenv  # contemporary version:
-virtualenv -p python3 .                # python3 -m venv capel-venv
-source ./capel-venv/bin/activate
+virtualenv -p python3 .                # python3 -m venv followdem-venv
+source ./followdem-venv/bin/activate
 pip install psycopg2-binary geoalchemy2 Flask flask_sqlalchemy flask_cors pyjwt Flask-Migrate
 # IOS: Applications/Python\ 3.6/Install\ Certificates.command
 ```
