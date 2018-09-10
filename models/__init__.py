@@ -5,4 +5,4 @@ DUPLICATE_KEY_ERROR_REGEX = r'DETAIL:\s+Key \((?P<duplicate_key>.*)\)=\(.*\) alr
 
 db = SQLAlchemy()
 migrate = Migrate()
-from . import Analysis, Animal, AnimalAttribute, AnimalDevice, Device, DeviceType
+from . import Analysis, Animal, Attribute, AnimalAttribute, AnimalDevice, Device, DeviceType
