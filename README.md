@@ -25,7 +25,7 @@ python3 get-pip.py
 ```sql
 sudo -u postgres psql postgres
 CREATE DATABASE name_database;
-\c followdem
+\c name_database
 CREATE EXTENSION postgis;
 CREATE EXTENSION postgis_topology;
 \q
