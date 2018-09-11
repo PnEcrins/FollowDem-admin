@@ -1,15 +1,16 @@
+from . import DUPLICATE_KEY_ERROR_REGEX
+import re
+
 def not_null_constraint_key(error):
     return error.split('violates not-null constraint')[0] \
                 .split('column')[1].strip().replace('"', '')
-
 
 def unique_constraint_key(error):
     m = re.search(DUPLICATE_KEY_ERROR_REGEX, error)
     return m.group('duplicate_key')
 
 def not_null_constraint_error(error):
-    print('la')
-    print(error)
+
     regexp_detail = r' (?P<value>.*) value in column "(?P<column>.*)" violates'
     match_detail = re.search(regexp_detail, error)
     column = match_detail.group('column')
