@@ -32,8 +32,7 @@ class Animal(db.Model):
             'birth_year': self.birth_year,
             'capture_date': self.capture_date,
             'death_date': self.death_date,
-            'comment': self.comment,
-            'status': self.status
+            'comment': self.comment
         }
 
 class Attribute(db.Model):
@@ -87,7 +86,7 @@ class Device(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     reference = db.Column(db.String(50), nullable=False)
-    device_type_id = db.Column(db.Integer(), primary_key=True)
+    device_type_id = db.Column(db.Integer())
     comment = db.Column(db.Text())
     created_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

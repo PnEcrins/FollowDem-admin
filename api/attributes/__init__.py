@@ -1,67 +1,68 @@
 from flask import (Blueprint, jsonify, request)
-from models import Animal, db
+from models import Attribute, db
 import traceback
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import func, desc
 
-animals = Blueprint('animals', __name__)
+Attributes = Blueprint('attributes', __name__)
 
-@animals.route('/api/animals', methods=['GET'])
-def get_animals():
+@Attributes.route('/api/attributes', methods=['GET'])
+def get_Attributes():
     try:
-        animals = Animal.query.\
-        order_by(desc(Animal.id)). \
+        attributes = Attribute.query.\
+        order_by(desc(Attribute.id)). \
         all()
-        return jsonify([ animal.json() for animal in animals ])
+        return jsonify([ Attribute.json() for Attribute in attributes ])
     except Exception:
         traceback.print_exc()
         return jsonify(error='Invalid JSON.'), 400
 
-@animals.route('/api/animals', methods=['POST'])
-def save_animals():
+@Attributes.route('/api/Attributes', methods=['POST'])
+def save_Attributes():
     try:
         payload = request.get_json()
     except Exception:
         return jsonify(error='Invalid JSON.')
 
-    validation = animals_validate_required(payload)
+    validation = Attributes_validate_required(payload)
     if validation['errors']:
         return jsonify(error={'name': 'invalid_model',
                               'errors': validation['errors']}), 400
-    animal = Animal(**payload)
+    attribute = Attribute(**payload)
     try:
-        db.session.add(animal)
+        db.session.add(attribute)
         db.session.commit()
-        return jsonify(animal.json())
+        return jsonify(attribute.json())
     except (IntegrityError, Exception) as e:
         traceback.print_exc()
         db.session.rollback()
 
-@animals.route('/api/animals', methods=['PATCH'])
-def patch_animals():
+@Attributes.route('/api/attributes', methods=['PATCH'])
+def patch_Attributes():
     try:
         payload = request.get_json()
     except Exception:
         return jsonify(error='Invalid JSON.')
 
-    validation = animals_validate_required(payload)
+    validation = Attributes_validate_required(payload)
     if validation['errors']:
         return jsonify(error={'name': 'invalid_model',
                               'errors': validation['errors']}), 400
-    animal = Animal(**payload)
+    attribute = Attribute(**payload)
     try:
-        Animal.query.filter_by(id=animal.get('id')).update(animal)
-        return jsonify(animal.json())
+        Attribute.query.filter_by(id=Attribute.get('id')).update(attribute)
+        return jsonify(Attribute.json())
     except (IntegrityError, Exception) as e:
         traceback.print_exc()
         db.session.rollback()
-@animals.route('/api/animals', methods=['DELETE'])
-def delete_animals():
+
+@Attributes.route('/api/attributes', methods=['DELETE'])
+def delete_Attributes():
     try:
         ids = request.args.getlist('id[]')
         for id in ids:
             print(id)
-            db.session.query(Animal).filter(Animal.id == int(id)).delete()
+            db.session.query(Attribute).filter(Attribute.id == int(id)).delete()
             db.session.commit()
         return jsonify('success'), 200
     except Exception:
@@ -69,13 +70,13 @@ def delete_animals():
         return jsonify(error='Invalid JSON.'), 400
 
 
-def animals_validate_required(animal):
+def attributes_validate_required(Attribute):
     errors = []
-    for attr in ('name', 'birth_year', 'capture_date', 'death_date'):
-        if not animal.get(attr, None):
+    for attr in ('name', 'value_list', 'attribute_type', 'attribute_type', 'order'):
+        if not Attribute.get(attr, None):
             errors.append({
                 'name': 'missing_attribute',
-                'table': 'animals',
+                'table': 'attributes',
                 'column': attr
             })
 
