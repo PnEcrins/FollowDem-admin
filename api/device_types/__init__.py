@@ -1,68 +1,68 @@
 from flask import (Blueprint, jsonify, request)
-from models import Attribute, db
+from models import DeviceType, db
 import traceback
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import func, desc
 
-attributes = Blueprint('attributes', __name__)
+device_types = Blueprint('device_types', __name__)
 
-@attributes.route('/api/attributes', methods=['GET'])
-def get_attributes():
+@device_types.route('/api/device_types', methods=['GET'])
+def get_DeviceTypes():
     try:
-        attributes = Attribute.query.\
-        order_by(desc(Attribute.id)). \
+        device_types = DeviceType.query.\
+        order_by(desc(DeviceType.id)). \
         all()
-        return jsonify([ Attribute.json() for Attribute in attributes ])
+        return jsonify([ DeviceType.json() for DeviceType in device_types ])
     except Exception:
         traceback.print_exc()
         return jsonify(error='Invalid JSON.'), 400
 
-@attributes.route('/api/attributes', methods=['POST'])
-def save_attributes():
+@device_types.route('/api/device_types', methods=['POST'])
+def save_DeviceTypes():
     try:
         payload = request.get_json()
     except Exception:
         return jsonify(error='Invalid JSON.')
 
-    validation = attributes_validate_required(payload)
+    validation = device_types_validate_required(payload)
     if validation['errors']:
         return jsonify(error={'name': 'invalid_model',
                               'errors': validation['errors']}), 400
-    attribute = Attribute(**payload)
+    device_type = DeviceType(**payload)
     try:
-        db.session.add(attribute)
+        db.session.add(device_type)
         db.session.commit()
-        return jsonify(attribute.json())
+        return jsonify(device_type.json())
     except (IntegrityError, Exception) as e:
         traceback.print_exc()
         db.session.rollback()
 
-@attributes.route('/api/attributes', methods=['PATCH'])
-def patch_attributes():
+@device_types.route('/api/device_types', methods=['PATCH'])
+def patch_DeviceTypes():
     try:
         payload = request.get_json()
     except Exception:
         return jsonify(error='Invalid JSON.')
 
-    validation = attributes_validate_required(payload)
+    validation = device_types_validate_required(payload)
     if validation['errors']:
         return jsonify(error={'name': 'invalid_model',
                               'errors': validation['errors']}), 400
-    attribute = Attribute(**payload)
+    device_type = DeviceType(**payload)
     try:
-        Attribute.query.filter_by(id=Attribute.get('id')).update(attribute)
-        return jsonify(Attribute.json())
+        DeviceType.query.filter_by(id=DeviceType.get('id')).update(device_type)
+        return jsonify(DeviceType.json())
     except (IntegrityError, Exception) as e:
         traceback.print_exc()
         db.session.rollback()
 
-@attributes.route('/api/attributes', methods=['DELETE'])
-def delete_attributes():
+@device_types.route('/api/device_types', methods=['DELETE'])
+def delete_DeviceTypes():
     try:
         ids = request.args.getlist('id[]')
         for id in ids:
             print(id)
-            db.session.query(Attribute).filter(Attribute.id == int(id)).delete()
+            db.session.query(DeviceType).filter(DeviceType.id == int(id)).delete()
             db.session.commit()
         return jsonify('success'), 200
     except Exception:
@@ -70,13 +70,13 @@ def delete_attributes():
         return jsonify(error='Invalid JSON.'), 400
 
 
-def attributes_validate_required(Attribute):
+def device_types_validate_required(DeviceType):
     errors = []
-    for attr in ('name', 'value_list', 'attribute_type', 'attribute_type', 'order'):
-        if not Attribute.get(attr, None):
+    for attr in ('name'):
+        if not DeviceType.get(attr, None):
             errors.append({
                 'name': 'missing_attribute',
-                'table': 'attributes',
+                'table': 'device_types',
                 'column': attr
             })
 

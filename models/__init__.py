@@ -15,13 +15,14 @@ class Animal(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    birth_year = db.Column(db.DateTime)
+    birth_year = db.Column(db.Integer())
     capture_date = db.Column(db.DateTime)
     death_date = db.Column(db.DateTime)
     comment = db.Column(db.Text())
     created_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
+    animal_devices = db.relationship('AnimalDevice', backref='animals', lazy='dynamic', foreign_keys='AnimalDevice.animal_id')
+    animal_attributes = db.relationship('AnimalAttribute', backref='animals', foreign_keys='AnimalAttribute.animal_id')
     def __repr__(self):
         return '<Animal %r>' % self.name
 
@@ -32,12 +33,14 @@ class Animal(db.Model):
             'birth_year': self.birth_year,
             'capture_date': self.capture_date,
             'death_date': self.death_date,
-            'comment': self.comment
+            'comment': self.comment,
+            'animal_devices': [animal_device.json() for animal_device in self.animal_devices],
+            'animal_attributes': [animal_attribute.json() for animal_attribute in self.animal_attributes],
         }
 
 class Attribute(db.Model):
 
-    __tablename__ = 'Attributes'
+    __tablename__ = 'attributes'
     __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.Integer(), primary_key=True)
@@ -86,7 +89,7 @@ class Device(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     reference = db.Column(db.String(50), nullable=False)
-    device_type_id = db.Column(db.Integer())
+    device_type_id = db.Column(db.Integer(), db.ForeignKey('device_types.id'), nullable=True)
     comment = db.Column(db.Text())
     created_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -107,14 +110,14 @@ class AnimalDevice(db.Model):
     __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.Integer(), primary_key=True)
-    animal_id = db.Column(db.Integer())
-    device_id = db.Column(db.Integer())
+    animal_id = db.Column(db.Integer(), db.ForeignKey('animals.id', ondelete='CASCADE'), nullable=True)
+    device_id = db.Column(db.Integer(), db.ForeignKey('devices.id'), nullable=True)
     start_at = db.Column(db.DateTime)
     end_at = db.Column(db.DateTime)
     comment = db.Column(db.Text())
     created_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
+    device = db.relationship('Device')
     def __repr__(self):
         return '<AnimalDevice %r>' % self.id
 
@@ -123,7 +126,8 @@ class AnimalDevice(db.Model):
             'id': self.id,
             'start_at': self.start_at,
             'end_at': self.end_at,
-            'comment': self.comment
+            'comment': self.comment,
+            'device' : self.device.json()
         }
 
 class AnimalAttribute(db.Model):
@@ -132,24 +136,20 @@ class AnimalAttribute(db.Model):
     __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.Integer(), primary_key=True)
-    animal_id = db.Column(db.Integer())
-    attribute_id = db.Column(db.Integer())
+    animal_id = db.Column(db.Integer(), db.ForeignKey('animals.id', ondelete='CASCADE'), nullable=True)
+    attribute_id = db.Column(db.Integer(), db.ForeignKey('attributes.id'), nullable=True)
     value = db.Column(db.Text())
     created_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
+    attribute = db.relationship('Attribute')
     def __repr__(self):
         return '<AnimalAttribute %r>' % self.name
 
     def json(self):
         return {
             'id': self.id,
-            'name': self.name,
-            'birth_year': self.birth_year,
-            'capture_date': self.capture_date,
-            'death_date': self.death_date,
-            'comment': self.comment,
-            'status': self.status
+            'value': self.value,
+            'attribute': self.attribute.json()
         }
 
 class Analysis(db.Model):
