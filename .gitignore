@@ -1,2 +1,24 @@
-*.sh
+# virtualenv
+.venv
+venv/
+ENV/
 
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mypy
+.mypy_cache/
+
+.vscodedb
+.vscode
+credentials.py
+app_conf.py
+.idea/
+dba.py
+.venv/
+.env
+run.sh
