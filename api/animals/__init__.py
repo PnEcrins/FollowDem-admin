@@ -92,6 +92,19 @@ def delete_animal_devices():
         traceback.print_exc()
         return jsonify(error='Invalid JSON.'), 400
 
+@animals.route('/api/animals/attributes', methods=['DELETE'])
+def delete_animal_attributes():
+    try:
+        ids = request.args.getlist('id[]')
+        for id in ids:
+            print(id)
+            db.session.query(AnimalAttribute).filter(AnimalAttribute.id == int(id)).delete()
+            db.session.commit()
+        return jsonify('success'), 200
+    except Exception:
+        traceback.print_exc()
+        return jsonify(error='Invalid JSON.'), 400
+
 @animals.route('/api/animals/<int:id>', methods=['GET'])
 def get_animal_by_id(id=id):
     animal = Animal.query.get(id)

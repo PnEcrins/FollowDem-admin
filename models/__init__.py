@@ -166,6 +166,8 @@ class Analysis(db.Model):
     temperature = db.Column(db.Integer())
     sat_number = db.Column(db.Integer())
     hadop = db.Column(db.Float())
+    latitude = db.Column(db.Float())
+    longitude = db.Column(db.Float())
     altitude = db.Column(db.Integer())
     geom_mp = db.Column(Geometry('POINT'))
     accurate = db.Column(db.Boolean())
@@ -180,3 +182,23 @@ class Analysis(db.Model):
         return {
             'id': self.id
         }
+
+class Log(db.Model):
+
+    __tablename__ = 'logs'
+    __table_args__ = {'extend_existing': True}
+
+    id = db.Column(db.Integer(), primary_key=True)
+    date = db.Column(db.Integer(), db.ForeignKey('animals.id', ondelete='CASCADE'), nullable=True)
+    log = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
+    def __repr__(self):
+        return '<AnimalDevice %r>' % self.id
+
+    def json(self):
+        return {
+            'id': self.id,
+            'date': self.date,
+            'log': self.log
+        }
+
+
