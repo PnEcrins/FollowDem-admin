@@ -17,6 +17,18 @@ def get_Devices():
         traceback.print_exc()
         return jsonify(error='Invalid JSON.'), 400
 
+@devices.route('/api/devices/<int:id>', methods=['GET'])
+def get_device_by_id(id=id):
+    try:
+        device = Device.query.get(id)
+        if device:
+            return jsonify(device.json())
+        else:
+            return 'error not found'
+    except Exception:
+        traceback.print_exc()
+        return jsonify(error='Invalid JSON.'), 400
+
 @devices.route('/api/devices', methods=['POST'])
 def save_Devices():
     print("yes")
@@ -51,8 +63,11 @@ def patch_Devices():
                               'errors': validation['errors']}), 400
     device = Device(**payload)
     try:
-        Device.query.filter_by(id=Device.get('id')).update(device)
-        return jsonify(Device.json())
+        id = int(payload['id'])
+        del payload['id']
+        db.session.query(Device).filter(Device.id == id).update(payload)
+        db.session.commit()
+        return jsonify(device.json())
     except (IntegrityError, Exception) as e:
         traceback.print_exc()
         db.session.rollback()

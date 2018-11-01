@@ -16,6 +16,17 @@ def get_DeviceTypes():
     except Exception:
         traceback.print_exc()
         return jsonify(error='Invalid JSON.'), 400
+@device_types.route('/api/device_types/<int:id>', methods=['GET'])
+def get_device_by_id(id=id):
+    try:
+        device_type = DeviceType.query.get(id)
+        if device_type:
+            return jsonify(device_type.json())
+        else:
+            return 'error not found'
+    except Exception:
+        traceback.print_exc()
+        return jsonify(error='Invalid JSON.'), 400
 
 @device_types.route('/api/device_types', methods=['POST'])
 def save_DeviceTypes():
@@ -50,8 +61,11 @@ def patch_DeviceTypes():
                               'errors': validation['errors']}), 400
     device_type = DeviceType(**payload)
     try:
-        DeviceType.query.filter_by(id=DeviceType.get('id')).update(device_type)
-        return jsonify(DeviceType.json())
+        id = int(payload['id'])
+        del payload['id']
+        db.session.query(DeviceType).filter(DeviceType.id == id).update(payload)
+        db.session.commit()
+        return jsonify(device_type.json())
     except (IntegrityError, Exception) as e:
         traceback.print_exc()
         db.session.rollback()
@@ -72,7 +86,7 @@ def delete_DeviceTypes():
 
 def device_types_validate_required(DeviceType):
     errors = []
-    for attr in ('name'):
+    for attr in (['name']):
         if not DeviceType.get(attr, None):
             errors.append({
                 'name': 'missing_attribute',

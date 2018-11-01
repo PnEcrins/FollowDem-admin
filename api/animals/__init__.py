@@ -1,5 +1,5 @@
 from flask import (Blueprint, jsonify, request)
-from models import Animal, AnimalDevice, db, AnimalAttribute
+from models import Animal, AnimalDevice, db, AnimalAttribute, Device
 import traceback
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import func, desc
@@ -48,7 +48,24 @@ def save_animal_devices():
     if validation['errors']:
         return jsonify(error={'name': 'invalid_model',
                               'errors': validation['errors']}), 400
+
     animalDevice = AnimalDevice(**payload)
+    device = Device.query.get(payload.get('device_id'))
+    snDs = db.session.query(
+        Device,
+        AnimalDevice
+    ).filter(
+        Device.device_type_id == device.device_type_id
+    ).filter(
+        Device.id == AnimalDevice.device_id
+    ).filter(
+        animalDevice.start_at >= AnimalDevice.start_at
+    ).filter(
+        animalDevice.end_at <= AnimalDevice.end_at
+    ).all()
+    if(snDs):
+        return jsonify(error={'name': 'invalid_period',
+                              'errors': 'animal can have only one device active on same type'}), 400
     try:
         db.session.add(animalDevice)
         db.session.commit()

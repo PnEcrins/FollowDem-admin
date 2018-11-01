@@ -4,6 +4,9 @@
     <list default="true" id="efebd6c6-f8d2-4110-8720-3865a0735410" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/animals/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/animals/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/attributes/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/attributes/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/device_types/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/device_types/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/devices/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/devices/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/__init__.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,8 +21,38 @@
       <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/animals/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1365">
-              <caret line="95" column="31" selection-start-line="95" selection-start-column="31" selection-end-line="95" selection-end-column="31" />
+            <state relative-caret-position="318">
+              <caret line="67" column="100" selection-start-line="67" selection-start-column="100" selection-end-line="67" selection-end-column="100" />
+              <folding>
+                <element signature="e#0#47#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/api/device_types/__init__.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="327">
+              <caret line="67" column="34" selection-start-line="67" selection-start-column="34" selection-end-line="67" selection-end-column="34" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/api/devices/__init__.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="306">
+              <caret line="69" column="5" selection-start-line="65" selection-start-column="8" selection-end-line="69" selection-end-column="5" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/api/attributes/__init__.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="283">
+              <caret line="65" column="25" lean-forward="true" selection-start-line="65" selection-start-column="25" selection-end-line="65" selection-end-column="25" />
               <folding>
                 <element signature="e#0#47#0" expanded="true" />
               </folding>
@@ -28,28 +61,19 @@
         </entry>
       </file>
       <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/api/attributes/__init__.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
-              <caret line="7" selection-start-line="7" selection-end-line="7" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/models/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="292">
-              <caret line="200" column="27" selection-start-line="200" selection-start-column="27" selection-end-line="200" selection-end-column="27" />
+            <state relative-caret-position="-532">
+              <caret line="40" column="15" selection-start-line="40" selection-start-column="6" selection-end-line="40" selection-end-column="15" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dde099ff89f0_.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="dde099ff89f0_.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/migrations/versions/dde099ff89f0_.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="230">
-              <caret line="22" column="44" lean-forward="true" selection-start-line="22" selection-start-column="44" selection-end-line="22" selection-end-column="44" />
+            <state relative-caret-position="315">
+              <caret line="22" column="44" selection-start-line="22" selection-start-column="44" selection-end-line="22" selection-end-column="44" />
             </state>
           </provider>
         </entry>
@@ -102,6 +126,7 @@
       <find>DeviceType</find>
       <find>delete</find>
       <find>AnimalAttribute</find>
+      <find>devices</find>
     </findStrings>
     <replaceStrings>
       <replace>device</replace>
@@ -130,7 +155,6 @@
         <option value="$PROJECT_DIR$/models/AnimalAttribute.py" />
         <option value="$PROJECT_DIR$/models/Analysis.py" />
         <option value="$PROJECT_DIR$/app.py" />
-        <option value="$PROJECT_DIR$/api/devices/__init__.py" />
         <option value="$PROJECT_DIR$/migrations/versions/078d8379b71e_.py" />
         <option value="$PROJECT_DIR$/migrations/versions/6ccb6f3570dd_.py" />
         <option value="$PROJECT_DIR$/migrations/versions/dca1a28f27d7_.py" />
@@ -139,14 +163,15 @@
         <option value="$PROJECT_DIR$/migrations/versions/24752d7eb72b_.py" />
         <option value="$PROJECT_DIR$/migrations/versions/5832f3ca3bd7_.py" />
         <option value="$PROJECT_DIR$/api/type_devices/__init__.py" />
-        <option value="$PROJECT_DIR$/api/device_types/__init__.py" />
         <option value="$PROJECT_DIR$/api/__init__.py" />
-        <option value="$PROJECT_DIR$/api/attributes/__init__.py" />
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/api/animals/__init__.py" />
-        <option value="$PROJECT_DIR$/models/__init__.py" />
         <option value="$PROJECT_DIR$/migrations/versions/dde099ff89f0_.py" />
+        <option value="$PROJECT_DIR$/models/__init__.py" />
+        <option value="$PROJECT_DIR$/api/attributes/__init__.py" />
+        <option value="$PROJECT_DIR$/api/devices/__init__.py" />
+        <option value="$PROJECT_DIR$/api/animals/__init__.py" />
+        <option value="$PROJECT_DIR$/api/device_types/__init__.py" />
       </list>
     </option>
   </component>
@@ -173,13 +198,18 @@
             <path>
               <item name="FollowDem-server" type="b2602c69:ProjectViewProjectNode" />
               <item name="FollowDem-server" type="462c0819:PsiDirectoryNode" />
-              <item name="migrations" type="462c0819:PsiDirectoryNode" />
+              <item name="api" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="FollowDem-server" type="b2602c69:ProjectViewProjectNode" />
               <item name="FollowDem-server" type="462c0819:PsiDirectoryNode" />
-              <item name="migrations" type="462c0819:PsiDirectoryNode" />
-              <item name="versions" type="462c0819:PsiDirectoryNode" />
+              <item name="api" type="462c0819:PsiDirectoryNode" />
+              <item name="device_types" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="FollowDem-server" type="b2602c69:ProjectViewProjectNode" />
+              <item name="FollowDem-server" type="462c0819:PsiDirectoryNode" />
+              <item name="models" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -223,18 +253,17 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-1280" y="298" width="1280" height="800" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.73045266" visible="true" weight="0.33280382" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.72633743" visible="true" weight="0.33280382" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" weight="0.34509373" />
-      <window_info id="Structure" order="1" sideWeight="0.2695473" side_tool="true" visible="true" weight="0.33280382" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info id="Structure" order="1" sideWeight="0.27366254" side_tool="true" visible="true" weight="0.33280382" />
       <window_info active="true" anchor="bottom" id="Terminal" order="7" visible="true" weight="0.30769232" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -437,20 +466,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/api/devices/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="18" lean-forward="true" selection-end-line="87" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/api/device_types/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="810">
-          <caret line="58" selection-start-line="58" selection-end-line="69" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/api/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
@@ -480,34 +495,51 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/api/animals/__init__.py">
+    <entry file="file://$PROJECT_DIR$/migrations/versions/dde099ff89f0_.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1365">
-          <caret line="95" column="31" selection-start-line="95" selection-start-column="31" selection-end-line="95" selection-end-column="31" />
+        <state relative-caret-position="315">
+          <caret line="22" column="44" selection-start-line="22" selection-start-column="44" selection-end-line="22" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/api/attributes/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="283">
+          <caret line="65" column="25" lean-forward="true" selection-start-line="65" selection-start-column="25" selection-end-line="65" selection-end-column="25" />
           <folding>
             <element signature="e#0#47#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/api/attributes/__init__.py">
+    <entry file="file://$PROJECT_DIR$/api/animals/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="7" selection-start-line="7" selection-end-line="7" />
+        <state relative-caret-position="318">
+          <caret line="67" column="100" selection-start-line="67" selection-start-column="100" selection-end-line="67" selection-end-column="100" />
+          <folding>
+            <element signature="e#0#47#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/models/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="292">
-          <caret line="200" column="27" selection-start-line="200" selection-start-column="27" selection-end-line="200" selection-end-column="27" />
+        <state relative-caret-position="-532">
+          <caret line="40" column="15" selection-start-line="40" selection-start-column="6" selection-end-line="40" selection-end-column="15" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/migrations/versions/dde099ff89f0_.py">
+    <entry file="file://$PROJECT_DIR$/api/devices/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="230">
-          <caret line="22" column="44" lean-forward="true" selection-start-line="22" selection-start-column="44" selection-end-line="22" selection-end-column="44" />
+        <state relative-caret-position="306">
+          <caret line="69" column="5" selection-start-line="65" selection-start-column="8" selection-end-line="69" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/api/device_types/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="327">
+          <caret line="67" column="34" selection-start-line="67" selection-start-column="34" selection-end-line="67" selection-end-column="34" />
         </state>
       </provider>
     </entry>

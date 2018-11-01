@@ -17,6 +17,18 @@ def get_attributes():
         traceback.print_exc()
         return jsonify(error='Invalid JSON.'), 400
 
+@attributes.route('/api/attributes/<int:id>', methods=['GET'])
+def get_attribute_by_id(id=id):
+    try:
+        attribute = Attribute.query.get(id)
+        if attribute:
+            return jsonify(attribute.json())
+        else:
+            return 'error not found'
+    except Exception:
+        traceback.print_exc()
+        return jsonify(error='Invalid JSON.'), 400
+
 @attributes.route('/api/attributes', methods=['POST'])
 def save_attributes():
     try:
@@ -50,8 +62,11 @@ def patch_attributes():
                               'errors': validation['errors']}), 400
     attribute = Attribute(**payload)
     try:
-        Attribute.query.filter_by(id=Attribute.get('id')).update(attribute)
-        return jsonify(Attribute.json())
+        id = int(payload['id'])
+        del payload['id']
+        db.session.query(Attribute).filter(Attribute.id == id).update(payload)
+        db.session.commit()
+        return jsonify(attribute.json())
     except (IntegrityError, Exception) as e:
         traceback.print_exc()
         db.session.rollback()

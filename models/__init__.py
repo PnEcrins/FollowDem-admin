@@ -101,7 +101,8 @@ class Device(db.Model):
         return {
             'id': self.id,
             'reference': self.reference,
-            'comment': self.comment
+            'comment': self.comment,
+            'device_type_id': self.device_type_id
         }
 
 class AnimalDevice(db.Model):
