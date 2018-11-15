@@ -3,10 +3,12 @@ from models import DeviceType, db
 import traceback
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import func, desc
+from pypnusershub import routes as fnauth
 
 device_types = Blueprint('device_types', __name__)
 
 @device_types.route('/api/device_types', methods=['GET'])
+@fnauth.check_auth(4)
 def get_DeviceTypes():
     try:
         device_types = DeviceType.query.\
@@ -17,6 +19,7 @@ def get_DeviceTypes():
         traceback.print_exc()
         return jsonify(error='Invalid JSON.'), 400
 @device_types.route('/api/device_types/<int:id>', methods=['GET'])
+@fnauth.check_auth(4)
 def get_device_by_id(id=id):
     try:
         device_type = DeviceType.query.get(id)
@@ -49,6 +52,7 @@ def save_DeviceTypes():
         db.session.rollback()
 
 @device_types.route('/api/device_types', methods=['PATCH'])
+@fnauth.check_auth(4)
 def patch_DeviceTypes():
     try:
         payload = request.get_json()
@@ -71,6 +75,7 @@ def patch_DeviceTypes():
         db.session.rollback()
 
 @device_types.route('/api/device_types', methods=['DELETE'])
+@fnauth.check_auth(4)
 def delete_DeviceTypes():
     try:
         ids = request.args.getlist('id[]')

@@ -3,10 +3,13 @@ from models import Animal, AnimalDevice, db, AnimalAttribute, Device
 import traceback
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import func, desc
+#Import de la librairie
+from pypnusershub import routes as fnauth
 
 animals = Blueprint('animals', __name__)
 
 @animals.route('/api/animals', methods=['GET'])
+@fnauth.check_auth(4)
 def get_animals():
     try:
         animals = Animal.query.\
@@ -18,6 +21,7 @@ def get_animals():
         return jsonify(error='Invalid JSON.'), 400
 
 @animals.route('/api/animals', methods=['POST'])
+@fnauth.check_auth(4)
 def save_animals():
     try:
         payload = request.get_json()
@@ -38,6 +42,7 @@ def save_animals():
         db.session.rollback()
 
 @animals.route('/api/animals/devices', methods=['POST'])
+@fnauth.check_auth(4)
 def save_animal_devices():
     try:
         payload = request.get_json()
@@ -76,6 +81,7 @@ def save_animal_devices():
         db.session.rollback()
 
 @animals.route('/api/animals/attributes', methods=['POST'])
+@fnauth.check_auth(4)
 def save_animal_attributes():
     try:
         payload = request.get_json()
@@ -97,6 +103,7 @@ def save_animal_attributes():
         db.session.rollback()
 
 @animals.route('/api/animals/devices', methods=['DELETE'])
+@fnauth.check_auth(4)
 def delete_animal_devices():
     try:
         ids = request.args.getlist('id[]')
@@ -110,6 +117,7 @@ def delete_animal_devices():
         return jsonify(error='Invalid JSON.'), 400
 
 @animals.route('/api/animals/attributes', methods=['DELETE'])
+@fnauth.check_auth(4)
 def delete_animal_attributes():
     try:
         ids = request.args.getlist('id[]')
@@ -131,6 +139,7 @@ def get_animal_by_id(id=id):
         return 'error not found'
 
 @animals.route('/api/animals', methods=['PATCH'])
+@fnauth.check_auth(4)
 def patch_animals():
     try:
         payload = request.get_json()
@@ -152,6 +161,7 @@ def patch_animals():
         traceback.print_exc()
         db.session.rollback()
 @animals.route('/api/animals', methods=['DELETE'])
+@fnauth.check_auth(4)
 def delete_animals():
     try:
         ids = request.args.getlist('id[]')

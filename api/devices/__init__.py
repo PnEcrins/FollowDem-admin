@@ -5,8 +5,10 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import func, desc
 
 devices = Blueprint('devices', __name__)
+from pypnusershub import routes as fnauth
 
 @devices.route('/api/devices', methods=['GET'])
+@fnauth.check_auth(4)
 def get_Devices():
     try:
         devices = Device.query.\
@@ -18,6 +20,7 @@ def get_Devices():
         return jsonify(error='Invalid JSON.'), 400
 
 @devices.route('/api/devices/<int:id>', methods=['GET'])
+@fnauth.check_auth(4)
 def get_device_by_id(id=id):
     try:
         device = Device.query.get(id)
@@ -30,6 +33,7 @@ def get_device_by_id(id=id):
         return jsonify(error='Invalid JSON.'), 400
 
 @devices.route('/api/devices', methods=['POST'])
+@fnauth.check_auth(4)
 def save_Devices():
     print("yes")
     try:
@@ -51,6 +55,7 @@ def save_Devices():
         db.session.rollback()
 
 @devices.route('/api/devices', methods=['PATCH'])
+@fnauth.check_auth(4)
 def patch_Devices():
     try:
         payload = request.get_json()
@@ -73,6 +78,7 @@ def patch_Devices():
         db.session.rollback()
 
 @devices.route('/api/devices', methods=['DELETE'])
+@fnauth.check_auth(4)
 def delete_Devices():
     try:
         ids = request.args.getlist('id[]')

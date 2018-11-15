@@ -1,4 +1,8 @@
 import os
-
+from models import (db)
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+DB=db
+PASS_METHOD = 'md5'
+COOKIE_EXPIRATION=3600
+SECRET_KEY='fls32'

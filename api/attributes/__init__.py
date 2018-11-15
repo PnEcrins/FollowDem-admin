@@ -3,10 +3,12 @@ from models import Attribute, db
 import traceback
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import func, desc
+from pypnusershub import routes as fnauth
 
 attributes = Blueprint('attributes', __name__)
 
 @attributes.route('/api/attributes', methods=['GET'])
+@fnauth.check_auth(4)
 def get_attributes():
     try:
         attributes = Attribute.query.\
@@ -18,6 +20,7 @@ def get_attributes():
         return jsonify(error='Invalid JSON.'), 400
 
 @attributes.route('/api/attributes/<int:id>', methods=['GET'])
+@fnauth.check_auth(4)
 def get_attribute_by_id(id=id):
     try:
         attribute = Attribute.query.get(id)
@@ -30,6 +33,7 @@ def get_attribute_by_id(id=id):
         return jsonify(error='Invalid JSON.'), 400
 
 @attributes.route('/api/attributes', methods=['POST'])
+@fnauth.check_auth(4)
 def save_attributes():
     try:
         payload = request.get_json()
@@ -50,6 +54,7 @@ def save_attributes():
         db.session.rollback()
 
 @attributes.route('/api/attributes', methods=['PATCH'])
+@fnauth.check_auth(4)
 def patch_attributes():
     try:
         payload = request.get_json()
@@ -72,6 +77,7 @@ def patch_attributes():
         db.session.rollback()
 
 @attributes.route('/api/attributes', methods=['DELETE'])
+@fnauth.check_auth(4)
 def delete_attributes():
     try:
         ids = request.args.getlist('id[]')
