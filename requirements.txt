@@ -20,3 +20,4 @@ reportlab==3.4.0
 six==1.11.0
 SQLAlchemy==1.2.7
 Werkzeug==0.14.1
+https://github.com/PnX-SI/UsersHub-authentification-module/archive/develop.zip
