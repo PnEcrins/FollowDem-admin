@@ -2,7 +2,7 @@ from flask import (Blueprint, jsonify, request)
 from models import Device, db
 import traceback
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, or_
 
 devices = Blueprint('devices', __name__)
 from pypnusershub import routes as fnauth
@@ -11,9 +11,17 @@ from pypnusershub import routes as fnauth
 @fnauth.check_auth(4)
 def get_Devices():
     try:
-        devices = Device.query.\
-        order_by(desc(Device.id)). \
-        all()
+        key = request.args.get("key")
+        devices = []
+        if key:
+            devices = Device.query. \
+                filter(or_(Device.reference.like("%" + key + "%"))). \
+                order_by(desc(Device.id)). \
+                all()
+        else:
+            devices = Device.query. \
+                order_by(desc(Device.id)). \
+                all()
         return jsonify([ Device.json() for Device in devices ])
     except Exception:
         traceback.print_exc()

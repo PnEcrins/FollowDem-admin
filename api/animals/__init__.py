@@ -2,7 +2,7 @@ from flask import (Blueprint, jsonify, request)
 from models import Animal, AnimalDevice, db, AnimalAttribute, Device
 import traceback
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, or_
 #Import de la librairie
 from pypnusershub import routes as fnauth
 
@@ -12,9 +12,17 @@ animals = Blueprint('animals', __name__)
 @fnauth.check_auth(4)
 def get_animals():
     try:
-        animals = Animal.query.\
-        order_by(desc(Animal.id)). \
-        all()
+        key = request.args.get("key")
+        animals = []
+        if key:
+            animals = Animal.query. \
+                filter(or_(Animal.name.like("%" + key + "%"))). \
+                order_by(desc(Animal.id)). \
+                all()
+        else:
+            animals = Animal.query.\
+            order_by(desc(Animal.id)). \
+            all()
         return jsonify([animal.json() for animal in animals])
     except Exception:
         traceback.print_exc()
@@ -72,8 +80,13 @@ def save_animal_devices():
         return jsonify(error={'name': 'invalid_period',
                               'errors': 'animal can have only one device active on same type'}), 400
     try:
-        db.session.add(animalDevice)
-        db.session.commit()
+        if payload['id']:
+            id = int(payload['id'])
+            del payload['id']
+            db.session.query(AnimalDevice).filter(AnimalDevice.id == id).update(payload)
+        else:
+            db.session.add(animalDevice)
+            db.session.commit()
         animal = Animal.query.get(animalDevice.animal_id)
         return jsonify(animal.json())
     except (IntegrityError, Exception) as e:
@@ -94,8 +107,13 @@ def save_animal_attributes():
                               'errors': validation['errors']}), 400
     animalAttribute = AnimalAttribute(**payload)
     try:
-        db.session.add(animalAttribute)
-        db.session.commit()
+        if payload['id']:
+            id = int(payload['id'])
+            del payload['id']
+            db.session.query(AnimalAttribute).filter(AnimalAttribute.id == id).update(payload)
+        else:
+            db.session.add(animalAttribute)
+            db.session.commit()
         animal = Animal.query.get(animalAttribute.animal_id)
         return jsonify(animal.json())
     except (IntegrityError, Exception) as e:
