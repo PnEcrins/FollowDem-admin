@@ -13,6 +13,11 @@ ENV/
 # mypy
 .mypy_cache/
 __pycache__/
+*.py[cod]
+*$py.class
+.mypy_cache/
+# C extensions
+*.so
 
 .vscodedb
 .vscode
