@@ -80,7 +80,7 @@ def save_animal_devices():
         return jsonify(error={'name': 'invalid_period',
                               'errors': 'animal can have only one device active on same type'}), 400
     try:
-        if payload['id']:
+        if 'id' in payload:
             id = int(payload['id'])
             del payload['id']
             db.session.query(AnimalDevice).filter(AnimalDevice.id == id).update(payload)
@@ -107,7 +107,7 @@ def save_animal_attributes():
                               'errors': validation['errors']}), 400
     animalAttribute = AnimalAttribute(**payload)
     try:
-        if payload['id']:
+        if 'id' in payload:
             id = int(payload['id'])
             del payload['id']
             db.session.query(AnimalAttribute).filter(AnimalAttribute.id == id).update(payload)
