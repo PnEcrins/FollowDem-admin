@@ -16,7 +16,7 @@ def get_animals():
         animals = []
         if key:
             animals = Animal.query. \
-                filter(or_(Animal.name.like("%" + key + "%"))). \
+                filter(or_(Animal.name.ilike("%" + key + "%"))). \
                 order_by(desc(Animal.id)). \
                 all()
         else:

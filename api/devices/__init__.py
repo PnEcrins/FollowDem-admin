@@ -15,7 +15,7 @@ def get_Devices():
         devices = []
         if key:
             devices = Device.query. \
-                filter(or_(Device.reference.like("%" + key + "%"))). \
+                filter(or_(Device.reference.ilike("%" + key + "%"))). \
                 order_by(desc(Device.id)). \
                 all()
         else:
