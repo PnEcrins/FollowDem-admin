@@ -93,7 +93,7 @@ def delete_attributes():
 
 def attributes_validate_required(Attribute):
     errors = []
-    for attr in ('name', 'value_list', 'attribute_type', 'attribute_type', 'order'):
+    for attr in ('name', 'attribute_type', 'attribute_type', 'order'):
         if not Attribute.get(attr, None):
             errors.append({
                 'name': 'missing_attribute',

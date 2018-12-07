@@ -11,7 +11,7 @@ migrate = Migrate()
 class Animal(db.Model):
 
     __tablename__ = 'animals'
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = {'extend_existing': True, u'schema': 'followdem'}
 
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(50), nullable=False)
@@ -41,7 +41,7 @@ class Animal(db.Model):
 class Attribute(db.Model):
 
     __tablename__ = 'attributes'
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = {'extend_existing': True, u'schema': 'followdem'}
 
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(50))
@@ -66,7 +66,7 @@ class Attribute(db.Model):
 class DeviceType(db.Model):
 
     __tablename__ = 'device_types'
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = {'extend_existing': True, u'schema': 'followdem'}
 
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(50), nullable=False)
@@ -85,11 +85,11 @@ class DeviceType(db.Model):
 class Device(db.Model):
 
     __tablename__ = 'devices'
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = {'extend_existing': True, u'schema': 'followdem'}
 
     id = db.Column(db.Integer(), primary_key=True)
     reference = db.Column(db.String(50), nullable=False)
-    device_type_id = db.Column(db.Integer(), db.ForeignKey('device_types.id'), nullable=True)
+    device_type_id = db.Column(db.Integer(), db.ForeignKey('followdem.device_types.id'), nullable=True)
     comment = db.Column(db.Text())
     created_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -108,11 +108,11 @@ class Device(db.Model):
 class AnimalDevice(db.Model):
 
     __tablename__ = 'animal_devices'
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = {'extend_existing': True, u'schema': 'followdem'}
 
     id = db.Column(db.Integer(), primary_key=True)
-    animal_id = db.Column(db.Integer(), db.ForeignKey('animals.id', ondelete='CASCADE'), nullable=True)
-    device_id = db.Column(db.Integer(), db.ForeignKey('devices.id'), nullable=True)
+    animal_id = db.Column(db.Integer(), db.ForeignKey('followdem.animals.id', ondelete='CASCADE'), nullable=True)
+    device_id = db.Column(db.Integer(), db.ForeignKey('followdem.devices.id'), nullable=True)
     start_at = db.Column(db.DateTime)
     end_at = db.Column(db.DateTime)
     comment = db.Column(db.Text())
@@ -134,11 +134,11 @@ class AnimalDevice(db.Model):
 class AnimalAttribute(db.Model):
 
     __tablename__ = 'animal_attributes'
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = {'extend_existing': True, u'schema': 'followdem'}
 
     id = db.Column(db.Integer(), primary_key=True)
-    animal_id = db.Column(db.Integer(), db.ForeignKey('animals.id', ondelete='CASCADE'), nullable=True)
-    attribute_id = db.Column(db.Integer(), db.ForeignKey('attributes.id'), nullable=True)
+    animal_id = db.Column(db.Integer(), db.ForeignKey('followdem.animals.id', ondelete='CASCADE'), nullable=True)
+    attribute_id = db.Column(db.Integer(), db.ForeignKey('followdem.attributes.id'), nullable=True)
     value = db.Column(db.Text())
     created_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -156,7 +156,7 @@ class AnimalAttribute(db.Model):
 class Analysis(db.Model):
 
     __tablename__ = 'analyses'
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = {'extend_existing': True, u'schema': 'followdem'}
 
     id = db.Column(db.Integer(), primary_key=True)
     device_id = db.Column(db.Integer())
@@ -187,10 +187,10 @@ class Analysis(db.Model):
 class Log(db.Model):
 
     __tablename__ = 'logs'
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = {'extend_existing': True, u'schema': 'followdem'}
 
     id = db.Column(db.Integer(), primary_key=True)
-    date = db.Column(db.Integer(), db.ForeignKey('animals.id', ondelete='CASCADE'), nullable=True)
+    date = db.Column(db.DateTime, nullable=True)
     log = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     def __repr__(self):
         return '<AnimalDevice %r>' % self.id

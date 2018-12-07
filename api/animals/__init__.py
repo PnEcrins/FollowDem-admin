@@ -86,7 +86,7 @@ def save_animal_devices():
             db.session.query(AnimalDevice).filter(AnimalDevice.id == id).update(payload)
         else:
             db.session.add(animalDevice)
-            db.session.commit()
+        db.session.commit()
         animal = Animal.query.get(animalDevice.animal_id)
         return jsonify(animal.json())
     except (IntegrityError, Exception) as e:
@@ -113,7 +113,7 @@ def save_animal_attributes():
             db.session.query(AnimalAttribute).filter(AnimalAttribute.id == id).update(payload)
         else:
             db.session.add(animalAttribute)
-            db.session.commit()
+        db.session.commit()
         animal = Animal.query.get(animalAttribute.animal_id)
         return jsonify(animal.json())
     except (IntegrityError, Exception) as e:

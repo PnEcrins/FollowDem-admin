@@ -39,3 +39,25 @@ source ./followdem-venv/bin/activate
 pip install psycopg2-binary geoalchemy2 Flask flask_sqlalchemy flask_cors pyjwt Flask-Migrate
 # IOS: Applications/Python\ 3.6/Install\ Certificates.command
 ```
+### migrate database and run application
+Connect your database with
+```
+export DATABASE_URL=postgresql://user_name:password@host:port/db_name
+```
+Then
+
+```
+export FLASK_APP=app.py
+```
+migrate the database using flask-migrate
+
+```
+flask db upgrade
+
+```
+Run the app.
+
+```
+flask run
+
+```

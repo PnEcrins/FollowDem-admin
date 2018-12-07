@@ -2,7 +2,7 @@
 .venv
 venv/
 ENV/
-
+.idea
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -11,6 +11,7 @@ ENV/
 .ropeproject
 
 # mypy
+**//__pycache__
 .mypy_cache/
 __pycache__/
 *.py[cod]
@@ -23,7 +24,6 @@ __pycache__/
 .vscode
 credentials.py
 app_conf.py
-.idea/
 dba.py
 .venv/
 .env
