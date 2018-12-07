@@ -102,7 +102,7 @@ def delete_Devices():
 
 def devices_validate_required(Device):
     errors = []
-    for attr in ('reference', 'comment', 'device_type_id'):
+    for attr in ('reference', 'device_type_id'):
         if not Device.get(attr, None):
             errors.append({
                 'name': 'missing_attribute',
