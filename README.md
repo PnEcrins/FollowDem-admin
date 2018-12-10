@@ -61,3 +61,9 @@ Run the app.
 flask run
 
 ```
+### importe old data
+check if you are in the directory
+```
+python import.py file_path
+
+```

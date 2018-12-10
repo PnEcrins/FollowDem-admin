@@ -171,6 +171,7 @@ class Analysis(db.Model):
     longitude = db.Column(db.Float())
     altitude = db.Column(db.Integer())
     geom_mp = db.Column(Geometry('POINT'))
+    dimension = db.Column(db.String(50))
     accurate = db.Column(db.Boolean())
     animale_device_id = db.Column(db.Integer())
     created_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
