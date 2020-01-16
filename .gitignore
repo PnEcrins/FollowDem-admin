@@ -27,3 +27,27 @@ dba.py
 .venv/
 .env
 run.sh
+
+# System Files
+.DS_Store
+Thumbs.db
+*.pyc
+*.pyo
+*.swp
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+jsconfig.json
+
+# IDE - VSCode
+.vscode/*
+
+# Conf
+*conf.py
+
