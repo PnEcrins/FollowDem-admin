@@ -4,9 +4,10 @@ import psycopg2
 import sys
 import datetime
 import re
+from conf import SQLALCHEMY_DATABASE_URI
 
 file_name = sys.argv[1]
-db = os.environ.get('DATABASE_URL')
+db = SQLALCHEMY_DATABASE_URI
 
 
 match = re.search(r'.*?\-(.*)_2.*' , file_name)

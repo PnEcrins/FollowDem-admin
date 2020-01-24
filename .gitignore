@@ -49,5 +49,4 @@ jsconfig.json
 .vscode/*
 
 # Conf
-*conf.py
-
+conf.py
