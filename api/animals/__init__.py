@@ -245,7 +245,16 @@ def animals_validate_required(animal):
                 'table': 'animals',
                 'column': attr
             })
-
+        # name must be unique        
+        name = animal.get('name').lower()
+        name = name.strip()
+        animal_exist = Animal.query.filter(Animal.name == name).first()
+        if (animal_exist and (animal_exist.json().get('id') != animal.get('id'))):
+            errors.append({
+                'name': 'attribute_already_exists',
+                'table': 'animals',
+                'column': 'name'
+            })
     if len(errors) >= 0:
         return {'errors': errors}
 
