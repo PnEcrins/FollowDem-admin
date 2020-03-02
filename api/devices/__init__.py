@@ -1,11 +1,12 @@
+from pypnusershub import routes as fnauth
 from flask import (Blueprint, jsonify, request)
-from models import Device, db
+from models import Device,DeviceType, db
 import traceback
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import func, desc, or_
 
 devices = Blueprint('devices', __name__)
-from pypnusershub import routes as fnauth
+
 
 @devices.route('/api/devices', methods=['GET'])
 @fnauth.check_auth(4)
@@ -22,7 +23,7 @@ def get_Devices():
             devices = Device.query. \
                 order_by(desc(Device.id)). \
                 all()
-        return jsonify([ Device.json() for Device in devices ])
+        return jsonify([Device.json() for Device in devices])
     except Exception:
         traceback.print_exc()
         return jsonify(error='Invalid JSON.'), 400
@@ -40,10 +41,10 @@ def get_device_by_id(id=id):
         traceback.print_exc()
         return jsonify(error='Invalid JSON.'), 400
 
+
 @devices.route('/api/devices', methods=['POST'])
 @fnauth.check_auth(4)
 def save_Devices():
-    print("yes")
     try:
         payload = request.get_json()
     except Exception:
@@ -61,6 +62,7 @@ def save_Devices():
     except (IntegrityError, Exception) as e:
         traceback.print_exc()
         db.session.rollback()
+
 
 @devices.route('/api/devices', methods=['PATCH'])
 @fnauth.check_auth(4)
@@ -85,13 +87,13 @@ def patch_Devices():
         traceback.print_exc()
         db.session.rollback()
 
+
 @devices.route('/api/devices', methods=['DELETE'])
 @fnauth.check_auth(4)
 def delete_Devices():
     try:
         ids = request.args.getlist('id[]')
         for id in ids:
-            print(id)
             db.session.query(Device).filter(Device.id == int(id)).delete()
             db.session.commit()
         return jsonify('success'), 200
@@ -100,16 +102,24 @@ def delete_Devices():
         return jsonify(error='Invalid JSON.'), 400
 
 
-def devices_validate_required(Device):
+def devices_validate_required(device):
     errors = []
     for attr in ('reference', 'device_type_id'):
-        if not Device.get(attr, None):
+        if not device.get(attr, None):
             errors.append({
                 'name': 'missing_attribute',
                 'table': 'devices',
                 'column': attr
             })
-
+    reference = device.get('reference').lower()
+    reference = reference.strip()
+    device_exist = Device.query.filter(Device.reference == reference).first()
+    if (device_exist and (device_exist.json().get('id') != device.get('id'))):
+          errors.append({
+                'name': 'device_already_exists',
+                'table': 'devices',
+                'column': attr
+            })
     if len(errors) >= 0:
         return {'errors': errors}
 

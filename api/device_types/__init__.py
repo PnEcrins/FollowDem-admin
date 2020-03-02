@@ -32,6 +32,7 @@ def get_device_by_id(id=id):
         return jsonify(error='Invalid JSON.'), 400
 
 @device_types.route('/api/device_types', methods=['POST'])
+@fnauth.check_auth(4)
 def save_DeviceTypes():
     try:
         payload = request.get_json()
@@ -80,7 +81,6 @@ def delete_DeviceTypes():
     try:
         ids = request.args.getlist('id[]')
         for id in ids:
-            print(id)
             db.session.query(DeviceType).filter(DeviceType.id == int(id)).delete()
             db.session.commit()
         return jsonify('success'), 200
@@ -89,17 +89,29 @@ def delete_DeviceTypes():
         return jsonify(error='Invalid JSON.'), 400
 
 
-def device_types_validate_required(DeviceType):
+def device_types_validate_required(device_type):
     errors = []
     for attr in (['name']):
-        if not DeviceType.get(attr, None):
+        if not device_type.get(attr, None):
             errors.append({
                 'name': 'missing_attribute',
                 'table': 'device_types',
                 'column': attr
+            })
+    name = device_type.get('name').lower()
+    name = name.strip()
+    device_type_exist = DeviceType.query.filter(DeviceType.name == name).first()
+    if device_type_exist: 
+          errors.append({
+                'name': 'attribute_already_exists', 
+                'table': 'device_types',
+                'column': 'name'
             })
 
     if len(errors) >= 0:
         return {'errors': errors}
 
     return True
+
+
+

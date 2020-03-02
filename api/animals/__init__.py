@@ -3,10 +3,11 @@ from models import Animal, AnimalDevice, db, AnimalAttribute, Device
 import traceback
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import func, desc, or_
-#Import de la librairie
+# Import de la librairie
 from pypnusershub import routes as fnauth
 
 animals = Blueprint('animals', __name__)
+
 
 @animals.route('/api/animals', methods=['GET'])
 @fnauth.check_auth(4)
@@ -21,26 +22,43 @@ def get_animals():
                 all()
         else:
             animals = Animal.query.\
-            order_by(desc(Animal.id)). \
-            all()
+                order_by(desc(Animal.id)). \
+                all()
         return jsonify([animal.json() for animal in animals])
     except Exception:
         traceback.print_exc()
         return jsonify(error='Invalid JSON.'), 400
+
 
 @animals.route('/api/animals', methods=['POST'])
 @fnauth.check_auth(4)
 def save_animals():
     try:
         payload = request.get_json()
+        animal_to_add = payload.get('animal')
+        devices_to_add = payload.get('devices')
+        attributes_to_add = payload.get('attributes')
+        print('payload post', payload)
     except Exception:
         return jsonify(error='Invalid JSON.')
 
-    validation = animals_validate_required(payload)
+    validation = animals_validate_required(animal_to_add)
     if validation['errors']:
         return jsonify(error={'name': 'invalid_model',
                               'errors': validation['errors']}), 400
-    animal = Animal(**payload)
+    animal = Animal(**animal_to_add)
+    if devices_to_add:
+        list_devices = []
+        for item in devices_to_add:
+            tmp = AnimalDevice(**item)
+            list_devices.append(tmp)
+        animal.animal_devices = list_devices
+    if attributes_to_add:
+        list_attributes = []
+        for item in attributes_to_add:
+            tmp = AnimalAttribute(**item)
+            list_attributes.append(tmp)
+        animal.animal_attributes = list_attributes
     try:
         db.session.add(animal)
         db.session.commit()
@@ -48,6 +66,7 @@ def save_animals():
     except (IntegrityError, Exception) as e:
         traceback.print_exc()
         db.session.rollback()
+
 
 @animals.route('/api/animals/devices', methods=['POST'])
 @fnauth.check_auth(4)
@@ -83,7 +102,8 @@ def save_animal_devices():
         if 'id' in payload:
             id = int(payload['id'])
             del payload['id']
-            db.session.query(AnimalDevice).filter(AnimalDevice.id == id).update(payload)
+            db.session.query(AnimalDevice).filter(
+                AnimalDevice.id == id).update(payload)
         else:
             db.session.add(animalDevice)
         db.session.commit()
@@ -92,6 +112,7 @@ def save_animal_devices():
     except (IntegrityError, Exception) as e:
         traceback.print_exc()
         db.session.rollback()
+
 
 @animals.route('/api/animals/attributes', methods=['POST'])
 @fnauth.check_auth(4)
@@ -110,7 +131,8 @@ def save_animal_attributes():
         if 'id' in payload:
             id = int(payload['id'])
             del payload['id']
-            db.session.query(AnimalAttribute).filter(AnimalAttribute.id == id).update(payload)
+            db.session.query(AnimalAttribute).filter(
+                AnimalAttribute.id == id).update(payload)
         else:
             db.session.add(animalAttribute)
         db.session.commit()
@@ -120,19 +142,21 @@ def save_animal_attributes():
         traceback.print_exc()
         db.session.rollback()
 
+
 @animals.route('/api/animals/devices', methods=['DELETE'])
 @fnauth.check_auth(4)
 def delete_animal_devices():
     try:
         ids = request.args.getlist('id[]')
         for id in ids:
-            print(id)
-            db.session.query(AnimalDevice).filter(AnimalDevice.id == int(id)).delete()
+            db.session.query(AnimalDevice).filter(
+                AnimalDevice.id == int(id)).delete()
             db.session.commit()
         return jsonify('success'), 200
     except Exception:
         traceback.print_exc()
         return jsonify(error='Invalid JSON.'), 400
+
 
 @animals.route('/api/animals/attributes', methods=['DELETE'])
 @fnauth.check_auth(4)
@@ -140,13 +164,14 @@ def delete_animal_attributes():
     try:
         ids = request.args.getlist('id[]')
         for id in ids:
-            print(id)
-            db.session.query(AnimalAttribute).filter(AnimalAttribute.id == int(id)).delete()
+            db.session.query(AnimalAttribute).filter(
+                AnimalAttribute.id == int(id)).delete()
             db.session.commit()
         return jsonify('success'), 200
     except Exception:
         traceback.print_exc()
         return jsonify(error='Invalid JSON.'), 400
+
 
 @animals.route('/api/animals/<int:id>', methods=['GET'])
 def get_animal_by_id(id=id):
@@ -156,35 +181,53 @@ def get_animal_by_id(id=id):
     else:
         return 'error not found'
 
+
 @animals.route('/api/animals', methods=['PATCH'])
 @fnauth.check_auth(4)
 def patch_animals():
     try:
         payload = request.get_json()
+        animal_to_update = payload.get('animal')
+        attributes = payload.get('attributes')
+        devices = payload.get('devices')
+        id = int(animal_to_update['id'])
+        del animal_to_update['id']
     except Exception:
         return jsonify(error='Invalid JSON.')
 
-    validation = animals_validate_required(payload)
+    validation = animals_validate_required(animal_to_update)
     if validation['errors']:
         return jsonify(error={'name': 'invalid_model',
                               'errors': validation['errors']}), 400
-    animal = Animal(**payload)
+    animal = Animal(**animal_to_update)
+
     try:
-        id = int(payload['id'])
-        del payload['id']
-        db.session.query(Animal).filter(Animal.id == id).update(payload)
+        db.session.query(Animal).filter(
+            Animal.id == id).update(animal_to_update)
+        db.session.query(AnimalAttribute).filter(AnimalAttribute.animal_id == id).delete()
+        db.session.query(AnimalDevice).filter(AnimalDevice.animal_id == id).delete()
+        if attributes:
+            for attribute in attributes:
+                attribute['animal_id'] = id
+                db.session.add(AnimalAttribute(**attribute))
+        
+        if devices:   
+            for device in devices:
+                device['animal_id'] = id
+                db.session.add(AnimalDevice(**device))
         db.session.commit()
         return jsonify(animal.json())
     except (IntegrityError, Exception) as e:
         traceback.print_exc()
         db.session.rollback()
+
+
 @animals.route('/api/animals', methods=['DELETE'])
 @fnauth.check_auth(4)
 def delete_animals():
     try:
-        ids = request.args.getlist('id[]')
+        ids=request.args.getlist('id[]')
         for id in ids:
-            print(id)
             db.session.query(Animal).filter(Animal.id == int(id)).delete()
             db.session.commit()
         return jsonify('success'), 200
@@ -194,8 +237,8 @@ def delete_animals():
 
 
 def animals_validate_required(animal):
-    errors = []
-    for attr in ('name', 'birth_year', 'capture_date', 'death_date'):
+    errors=[]
+    for attr in ('name', 'birth_year', 'capture_date'):
         if not animal.get(attr, None):
             errors.append({
                 'name': 'missing_attribute',
@@ -208,8 +251,9 @@ def animals_validate_required(animal):
 
     return True
 
+
 def animal_devices_validate_required(animal):
-    errors = []
+    errors=[]
     for attr in ('start_at', 'end_at', 'animal_id', 'device_id'):
         if not animal.get(attr, None):
             errors.append({
@@ -222,8 +266,10 @@ def animal_devices_validate_required(animal):
         return {'errors': errors}
 
     return True
+
+
 def animal_attributes_validate_required(animal):
-    errors = []
+    errors=[]
     for attr in ('value', 'animal_id', 'attribute_id'):
         if not animal.get(attr, None):
             errors.append({

@@ -17,12 +17,12 @@ class Animal(db.Model):
     name = db.Column(db.String(50), nullable=False)
     birth_year = db.Column(db.Integer())
     capture_date = db.Column(db.DateTime)
-    death_date = db.Column(db.DateTime)
+    death_date = db.Column(db.DateTime,  nullable=True)
     comment = db.Column(db.Text())
     created_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    animal_devices = db.relationship('AnimalDevice', backref='animals', lazy='dynamic', foreign_keys='AnimalDevice.animal_id')
-    animal_attributes = db.relationship('AnimalAttribute', backref='animals', foreign_keys='AnimalAttribute.animal_id')
+    animal_devices = db.relationship('AnimalDevice', backref='animals', cascade="save-update, delete", lazy='dynamic', foreign_keys='AnimalDevice.animal_id')
+    animal_attributes = db.relationship('AnimalAttribute', backref='animals',cascade="save-update, delete",  lazy='dynamic', foreign_keys='AnimalAttribute.animal_id')
     def __repr__(self):
         return '<Animal %r>' % self.name
 
@@ -93,7 +93,7 @@ class Device(db.Model):
     comment = db.Column(db.Text())
     created_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
+    device_type = db.relationship('DeviceType')
     def __repr__(self):
         return '<Device %r>' % self.reference
 
@@ -102,7 +102,7 @@ class Device(db.Model):
             'id': self.id,
             'reference': self.reference,
             'comment': self.comment,
-            'device_type_id': self.device_type_id
+            'device_type': self.device_type.json(),
         }
 
 class AnimalDevice(db.Model):
