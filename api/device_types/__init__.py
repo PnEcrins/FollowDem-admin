@@ -101,7 +101,7 @@ def device_types_validate_required(device_type):
     name = device_type.get('name').lower()
     name = name.strip()
     device_type_exist = DeviceType.query.filter(DeviceType.name == name).first()
-    if device_type_exist: 
+    if device_type_exist and (device_type_exist.json().get('id') != device_type.get('id')): 
           errors.append({
                 'name': 'attribute_already_exists', 
                 'table': 'device_types',
