@@ -1,9 +1,10 @@
 from flask import (Blueprint, jsonify, request)
 from models import Animal, AnimalDevice, db, AnimalAttribute, Device
 import traceback
+import json
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import func, desc, or_
-# Import de la librairie
+from datetime import datetime
 from pypnusershub import routes as fnauth
 
 animals = Blueprint('animals', __name__)
@@ -38,10 +39,8 @@ def save_animals():
         animal_to_add = payload.get('animal')
         devices_to_add = payload.get('devices')
         attributes_to_add = payload.get('attributes')
-        print('payload post', payload)
     except Exception:
         return jsonify(error='Invalid JSON.')
-
     validation = animals_validate_required(animal_to_add)
     if validation['errors']:
         return jsonify(error={'name': 'invalid_model',
@@ -83,6 +82,7 @@ def save_animal_devices():
 
     animalDevice = AnimalDevice(**payload)
     device = Device.query.get(payload.get('device_id'))
+    animals_devices_validate(device.json())
     snDs = db.session.query(
         Device,
         AnimalDevice
@@ -191,11 +191,10 @@ def patch_animals():
         attributes = payload.get('attributes')
         devices = payload.get('devices')
         id = int(animal_to_update['id'])
-        del animal_to_update['id']
     except Exception:
         return jsonify(error='Invalid JSON.')
-
     validation = animals_validate_required(animal_to_update)
+    del animal_to_update['id']
     if validation['errors']:
         return jsonify(error={'name': 'invalid_model',
                               'errors': validation['errors']}), 400
@@ -204,14 +203,16 @@ def patch_animals():
     try:
         db.session.query(Animal).filter(
             Animal.id == id).update(animal_to_update)
-        db.session.query(AnimalAttribute).filter(AnimalAttribute.animal_id == id).delete()
-        db.session.query(AnimalDevice).filter(AnimalDevice.animal_id == id).delete()
+        db.session.query(AnimalAttribute).filter(
+            AnimalAttribute.animal_id == id).delete()
+        db.session.query(AnimalDevice).filter(
+            AnimalDevice.animal_id == id).delete()
         if attributes:
             for attribute in attributes:
                 attribute['animal_id'] = id
                 db.session.add(AnimalAttribute(**attribute))
-        
-        if devices:   
+
+        if devices:
             for device in devices:
                 device['animal_id'] = id
                 db.session.add(AnimalDevice(**device))
@@ -226,7 +227,7 @@ def patch_animals():
 @fnauth.check_auth(4)
 def delete_animals():
     try:
-        ids=request.args.getlist('id[]')
+        ids = request.args.getlist('id[]')
         for id in ids:
             db.session.query(Animal).filter(Animal.id == int(id)).delete()
             db.session.commit()
@@ -237,7 +238,7 @@ def delete_animals():
 
 
 def animals_validate_required(animal):
-    errors=[]
+    errors = []
     for attr in ('name', 'birth_year', 'capture_date'):
         if not animal.get(attr, None):
             errors.append({
@@ -245,7 +246,7 @@ def animals_validate_required(animal):
                 'table': 'animals',
                 'column': attr
             })
-        # name must be unique        
+        # name must be unique
         name = animal.get('name').lower()
         name = name.strip()
         animal_exist = Animal.query.filter(Animal.name == name).first()
@@ -257,28 +258,25 @@ def animals_validate_required(animal):
             })
     if len(errors) >= 0:
         return {'errors': errors}
-
     return True
 
 
 def animal_devices_validate_required(animal):
-    errors=[]
+    errors = []
     for attr in ('start_at', 'end_at', 'animal_id', 'device_id'):
         if not animal.get(attr, None):
             errors.append({
                 'name': 'missing_attribute',
                 'table': 'animals',
                 'column': attr
-            })
-
+         })
     if len(errors) >= 0:
         return {'errors': errors}
-
     return True
 
 
 def animal_attributes_validate_required(animal):
-    errors=[]
+    errors = []
     for attr in ('value', 'animal_id', 'attribute_id'):
         if not animal.get(attr, None):
             errors.append({
@@ -286,8 +284,25 @@ def animal_attributes_validate_required(animal):
                 'table': 'animals',
                 'column': attr
             })
-
     if len(errors) >= 0:
         return {'errors': errors}
 
     return True
+
+
+@animals.route('/api/animals/device_available', methods=['POST'])
+@fnauth.check_auth(4)
+def check_devices_available():
+    try:
+        device_id = request.get_json()
+    except Exception:
+        return jsonify(error='Invalid JSON.')
+    try:
+        now = datetime.now()
+        device_exist = AnimalDevice.query.filter(
+            AnimalDevice.device_id == device_id).first()
+        if (device_exist and (device_exist.json().get('end_at') > now)):
+            return jsonify([device_id]), 200
+        return jsonify([]), 200
+    except Exception:
+        return jsonify(error='server error'), 500
