@@ -1,36 +1,37 @@
-import urlparse # for python 3+ use: from urllib.parse import urlparse
+from urllib.parse import urlparse
 import os
 import psycopg2
 import sys
 import datetime
 import re
+import csv
 from conf import SQLALCHEMY_DATABASE_URI
 
 file_name = sys.argv[1]
 db = SQLALCHEMY_DATABASE_URI
 
-
-match = re.search(r'.*?\-(.*)_2.*' , file_name)
+# Return device id : fisrt match between  caracters - and _
+match = re.search(r'\-(.*?)\_', file_name)
 device_id = match.group(1)
+
 def validate(line):
     try:
-        row = line.split('	')
-        datetime.datetime.strptime(row[0], '%Y-%m-%d')
-        datetime.datetime.strptime(row[1], "%H:%M:%S")
-        float(row[2])
-        float(row[3])
-        float(row[4])
-        float(row[5])
-        float(row[7])
-        float(row[8])
-        float(row[9])
-        float(row[10])
+        datetime.datetime.strptime(line[0], '%Y-%m-%d')
+        datetime.datetime.strptime(line[1], "%H:%M:%S")
+        float(line[2])
+        float(line[3])
+        float(line[4])
+        float(line[5])
+        float(line[7])
+        float(line[8])
+        float(line[9])
+        float(line[10])
         return 1
     except ValueError as e:
         print (e)
         return 0
 
-result = urlparse.urlparse(db)
+result = urlparse(db)
 username = result.username
 password = result.password
 database = result.path[1:]
@@ -42,22 +43,24 @@ connection = psycopg2.connect(
     host = hostname
 )
 cur = connection.cursor()
-with open(file_name, "r+") as script:
-    i=0;
-    for line in script.readlines():
-        if(validate(line)==1):
+
+with open(file_name, "r", encoding="utf8", errors='ignore') as f:
+    # delimiter tab
+    reader = csv.reader(f, delimiter='\t')
+    next(reader)
+    for line in reader:
+        line = [x.strip(' ') for x in line]
+        if(len(line) > 0 and validate(line)==1):
             try:
-                row = line.split('	')
-                row = [x.strip(' ') for x in row]
-                del row[1]#time
-                del row[5]#2D/3D
-                del row[6]
-                print(row)
-                row.insert(0, device_id)
+                del line[1]#time
+                del line[5]#2D/3D
+                del line[8]#x
+                del line[8]#y
+                line.insert(0, device_id)
                 cur.execute(
-                    "INSERT INTO followdem.analyses(device_id, gps_date,ttf,latitude, longitude, sat_number,altitude,hadop,temperature, x, y) "
-                    "VALUES (%s,%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                    row
+                    "INSERT INTO followdem.t_gps_data(id_device, gps_date, ttf, latitude, longitude, sat_number, altitude, hdop, temperature) "
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                    line
                 )
             except ValueError:
                 print('error in line :'+ line)
