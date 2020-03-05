@@ -31,6 +31,11 @@ def validate(line):
         print (e)
         return 0
 
+def format_to_timestamp(str_date, str_time):
+    dt = datetime.datetime.strptime(str_date,'%Y-%m-%d')
+    tm = datetime.datetime.strptime(str_time, '%H:%M:%S').time()
+    return datetime.datetime.combine(dt, tm).strftime('%Y-%m-%d %H:%M:%S')
+
 result = urlparse(db)
 username = result.username
 password = result.password
@@ -52,6 +57,7 @@ with open(file_name, "r", encoding="utf8", errors='ignore') as f:
         line = [x.strip(' ') for x in line]
         if(len(line) > 0 and validate(line)==1):
             try:
+                line[0] = format_to_timestamp(line[0], line[1])
                 del line[1]#time
                 del line[5]#2D/3D
                 del line[8]#x
