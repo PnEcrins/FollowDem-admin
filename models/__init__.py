@@ -1,12 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from datetime import datetime
 from geoalchemy2 import Geometry
 
 DUPLICATE_KEY_ERROR_REGEX = r'DETAIL:\s+Key \((?P<duplicate_key>.*)\)=\(.*\) already exists.'
 
 db = SQLAlchemy()
-migrate = Migrate()
+
 
 class Animal(db.Model):
 
