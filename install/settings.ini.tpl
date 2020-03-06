@@ -16,7 +16,7 @@ db_port=5432
 db_name=followdem
 
 # Nom du propriétaire de la BDD, utilisé pour créer et mettre à jour la BDD
-owner_followdem=followdem
+owner_followdem=followdemadmin
 
 # Password du propriétaire de la BDD
-owner_followdem_pass=n@tur4L
+owner_followdem_pass=monpassachanger
