@@ -13,7 +13,7 @@ attributes = Blueprint('attributes', __name__)
 def get_attributes():
     try:
         attributes = Attribute.query.\
-            order_by(desc(Attribute.id)). \
+            order_by(desc(Attribute.id_attribute)). \
             all()
         return jsonify([Attribute.json() for Attribute in attributes])
     except Exception:
@@ -71,9 +71,9 @@ def patch_attributes():
                               'errors': validation['errors']}), 400
     attribute = Attribute(**payload)
     try:
-        id = int(payload['id'])
-        del payload['id']
-        db.session.query(Attribute).filter(Attribute.id == id).update(payload)
+        id = int(payload['id_attribute'])
+        del payload['id_attribute']
+        db.session.query(Attribute).filter(Attribute.id_attribute == id).update(payload)
         db.session.commit()
         return jsonify(attribute.json())
     except (IntegrityError, Exception) as e:
@@ -88,7 +88,7 @@ def delete_attributes():
         ids = request.args.getlist('id[]')
         for id in ids:
             db.session.query(Attribute).filter(
-                Attribute.id == int(id)).delete()
+                Attribute.id_attribute == int(id)).delete()
             db.session.commit()
         return jsonify('success'), 200
     except Exception:
@@ -99,7 +99,7 @@ def delete_attributes():
 def attributes_validate_required(attribute):
     errors = []
     # required fields
-    for attr in ('name', 'attribute_type', 'value_list', 'attribute_type', 'order'):
+    for attr in ('attribute', 'attribute_type', 'value_list', 'attribute_type', 'order'):
         if not attribute.get(attr, None):
             errors.append({
                 'name': 'missing_attribute',
@@ -107,19 +107,19 @@ def attributes_validate_required(attribute):
                 'column': attr
             })
     # name must be unique        
-    name = attribute.get('name').lower()
-    name = name.strip()
-    attribute_exist = Attribute.query.filter(Attribute.name == name).first()
-    if (attribute_exist and (attribute_exist.json().get('id') != attribute.get('id'))):
+    attribute_val = attribute.get('attribute').lower()
+    attribute_val = attribute_val.strip()
+    attribute_exist = Attribute.query.filter(Attribute.attribute == attribute_val).first()
+    if (attribute_exist and (attribute_exist.json().get('id_attribute') != attribute.get('id_attribute'))):
         errors.append({
             'name': 'attribute_already_exists',
             'table': 'attributes',
-            'column': 'name'
+            'column': 'attribute'
         })
     # order must be unique 
     order = attribute.get('order')
     order_exist = Attribute.query.filter(Attribute.order == order).first()
-    if (order_exist  and (order_exist.json().get('id') != attribute.get('id'))):
+    if (order_exist  and (order_exist.json().get('id_attribute') != attribute.get('id_attribute'))):
         errors.append({
             'name': 'order_already_exists',
             'table': 'attributes',

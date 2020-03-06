@@ -12,12 +12,13 @@ device_types = Blueprint('device_types', __name__)
 def get_DeviceTypes():
     try:
         device_types = DeviceType.query.\
-        order_by(desc(DeviceType.id)). \
+        order_by(desc(DeviceType.id_device_type)). \
         all()
         return jsonify([ DeviceType.json() for DeviceType in device_types ])
     except Exception:
         traceback.print_exc()
         return jsonify(error='Invalid JSON.'), 400
+
 @device_types.route('/api/device_types/<int:id>', methods=['GET'])
 @fnauth.check_auth(4)
 def get_device_by_id(id=id):
@@ -66,9 +67,9 @@ def patch_DeviceTypes():
                               'errors': validation['errors']}), 400
     device_type = DeviceType(**payload)
     try:
-        id = int(payload['id'])
-        del payload['id']
-        db.session.query(DeviceType).filter(DeviceType.id == id).update(payload)
+        id = int(payload['id_device_type'])
+        del payload['id_device_type']
+        db.session.query(DeviceType).filter(DeviceType.id_device_type == id).update(payload)
         db.session.commit()
         return jsonify(device_type.json())
     except (IntegrityError, Exception) as e:
@@ -81,7 +82,7 @@ def delete_DeviceTypes():
     try:
         ids = request.args.getlist('id[]')
         for id in ids:
-            db.session.query(DeviceType).filter(DeviceType.id == int(id)).delete()
+            db.session.query(DeviceType).filter(DeviceType.id_device_type == int(id)).delete()
             db.session.commit()
         return jsonify('success'), 200
     except Exception:
@@ -91,21 +92,21 @@ def delete_DeviceTypes():
 
 def device_types_validate_required(device_type):
     errors = []
-    for attr in (['name']):
+    for attr in (['device_type']):
         if not device_type.get(attr, None):
             errors.append({
                 'name': 'missing_attribute',
                 'table': 'device_types',
                 'column': attr
             })
-    name = device_type.get('name').lower()
-    name = name.strip()
-    device_type_exist = DeviceType.query.filter(DeviceType.name == name).first()
-    if device_type_exist and (device_type_exist.json().get('id') != device_type.get('id')): 
+    device_type_att = device_type.get('device_type').lower()
+    device_type_att = device_type_att.strip()
+    device_type_exist = DeviceType.query.filter(DeviceType.device_type == device_type_att).first()
+    if device_type_exist and (device_type_exist.json().get('id_device_type') != device_type.get('id_device_type')): 
           errors.append({
                 'name': 'attribute_already_exists', 
                 'table': 'device_types',
-                'column': 'name'
+                'column': 'device_type'
             })
 
     if len(errors) >= 0:

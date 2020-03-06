@@ -9,9 +9,8 @@ cors = CORS(app, supports_credentials=True)
 with app.app_context():
     app.config.from_object('conf')
 
-    from models import (db, migrate)
+    from models import db
     db.init_app(app)
-    migrate.init_app(app, db)
     import api
     app.register_blueprint(api.api)
     api.init_app(app)

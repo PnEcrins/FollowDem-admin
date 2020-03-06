@@ -16,12 +16,12 @@ def get_Devices():
         devices = []
         if key:
             devices = Device.query. \
-                filter(or_(Device.reference.ilike("%" + key + "%"))). \
-                order_by(desc(Device.id)). \
+                filter(or_(Device.ref_device.ilike("%" + key + "%"))). \
+                order_by(desc(Device.id_device)). \
                 all()
         else:
             devices = Device.query. \
-                order_by(desc(Device.id)). \
+                order_by(desc(Device.id_device)). \
                 all()
         return jsonify([Device.json() for Device in devices])
     except Exception:
@@ -76,13 +76,12 @@ def patch_Devices():
     if validation['errors']:
         return jsonify(error={'name': 'invalid_model',
                               'errors': validation['errors']}), 400
-    device = Device(**payload)
     try:
-        id = int(payload['id'])
-        del payload['id']
-        db.session.query(Device).filter(Device.id == id).update(payload)
+        id = int(payload['id_device'])
+        del payload['id_device']
+        db.session.query(Device).filter(Device.id_device == id).update(payload)
         db.session.commit()
-        return jsonify(device.json())
+        return jsonify('update'),200
     except (IntegrityError, Exception) as e:
         traceback.print_exc()
         db.session.rollback()
@@ -94,7 +93,7 @@ def delete_Devices():
     try:
         ids = request.args.getlist('id[]')
         for id in ids:
-            db.session.query(Device).filter(Device.id == int(id)).delete()
+            db.session.query(Device).filter(Device.id_device == int(id)).delete()
             db.session.commit()
         return jsonify('success'), 200
     except Exception:
@@ -104,17 +103,17 @@ def delete_Devices():
 
 def devices_validate_required(device):
     errors = []
-    for attr in ('reference', 'device_type_id'):
+    for attr in ('ref_device', 'id_device'):
         if not device.get(attr, None):
             errors.append({
                 'name': 'missing_attribute',
                 'table': 'devices',
                 'column': attr
             })
-    reference = device.get('reference').lower()
+    reference = device.get('ref_device').lower()
     reference = reference.strip()
-    device_exist = Device.query.filter(Device.reference == reference).first()
-    if (device_exist and (device_exist.json().get('id') != device.get('id'))):
+    device_exist = Device.query.filter(Device.ref_device == reference).first()
+    if (device_exist and (device_exist.json().get('id_device') != device.get('id_device'))):
           errors.append({
                 'name': 'device_already_exists',
                 'table': 'devices',
