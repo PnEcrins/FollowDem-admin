@@ -19,11 +19,11 @@ def get_animals():
         if key:
             animals = Animal.query. \
                 filter(or_(Animal.name.ilike("%" + key + "%"))). \
-                order_by(desc(Animal.id)). \
+                order_by(desc(Animal.id_animal)). \
                 all()
         else:
             animals = Animal.query.\
-                order_by(desc(Animal.id)). \
+                order_by(desc(Animal.id_animal)). \
                 all()
         return jsonify([animal.json() for animal in animals])
     except Exception:
@@ -67,112 +67,6 @@ def save_animals():
         db.session.rollback()
 
 
-@animals.route('/api/animals/devices', methods=['POST'])
-@fnauth.check_auth(4)
-def save_animal_devices():
-    try:
-        payload = request.get_json()
-    except Exception:
-        return jsonify(error='Invalid JSON.')
-
-    validation = animal_devices_validate_required(payload)
-    if validation['errors']:
-        return jsonify(error={'name': 'invalid_model',
-                              'errors': validation['errors']}), 400
-
-    animalDevice = AnimalDevice(**payload)
-    device = Device.query.get(payload.get('device_id'))
-    animals_devices_validate(device.json())
-    snDs = db.session.query(
-        Device,
-        AnimalDevice
-    ).filter(
-        Device.device_type_id == device.device_type_id
-    ).filter(
-        Device.id == AnimalDevice.device_id
-    ).filter(
-        animalDevice.start_at >= AnimalDevice.start_at
-    ).filter(
-        animalDevice.end_at <= AnimalDevice.end_at
-    ).all()
-    if(snDs):
-        return jsonify(error={'name': 'invalid_period',
-                              'errors': 'animal can have only one device active on same type'}), 400
-    try:
-        if 'id' in payload:
-            id = int(payload['id'])
-            del payload['id']
-            db.session.query(AnimalDevice).filter(
-                AnimalDevice.id == id).update(payload)
-        else:
-            db.session.add(animalDevice)
-        db.session.commit()
-        animal = Animal.query.get(animalDevice.animal_id)
-        return jsonify(animal.json())
-    except (IntegrityError, Exception) as e:
-        traceback.print_exc()
-        db.session.rollback()
-
-
-@animals.route('/api/animals/attributes', methods=['POST'])
-@fnauth.check_auth(4)
-def save_animal_attributes():
-    try:
-        payload = request.get_json()
-    except Exception:
-        return jsonify(error='Invalid JSON.')
-
-    validation = animal_attributes_validate_required(payload)
-    if validation['errors']:
-        return jsonify(error={'name': 'invalid_model',
-                              'errors': validation['errors']}), 400
-    animalAttribute = AnimalAttribute(**payload)
-    try:
-        if 'id' in payload:
-            id = int(payload['id'])
-            del payload['id']
-            db.session.query(AnimalAttribute).filter(
-                AnimalAttribute.id == id).update(payload)
-        else:
-            db.session.add(animalAttribute)
-        db.session.commit()
-        animal = Animal.query.get(animalAttribute.animal_id)
-        return jsonify(animal.json())
-    except (IntegrityError, Exception) as e:
-        traceback.print_exc()
-        db.session.rollback()
-
-
-@animals.route('/api/animals/devices', methods=['DELETE'])
-@fnauth.check_auth(4)
-def delete_animal_devices():
-    try:
-        ids = request.args.getlist('id[]')
-        for id in ids:
-            db.session.query(AnimalDevice).filter(
-                AnimalDevice.id == int(id)).delete()
-            db.session.commit()
-        return jsonify('success'), 200
-    except Exception:
-        traceback.print_exc()
-        return jsonify(error='Invalid JSON.'), 400
-
-
-@animals.route('/api/animals/attributes', methods=['DELETE'])
-@fnauth.check_auth(4)
-def delete_animal_attributes():
-    try:
-        ids = request.args.getlist('id[]')
-        for id in ids:
-            db.session.query(AnimalAttribute).filter(
-                AnimalAttribute.id == int(id)).delete()
-            db.session.commit()
-        return jsonify('success'), 200
-    except Exception:
-        traceback.print_exc()
-        return jsonify(error='Invalid JSON.'), 400
-
-
 @animals.route('/api/animals/<int:id>', methods=['GET'])
 def get_animal_by_id(id=id):
     animal = Animal.query.get(id)
@@ -190,11 +84,11 @@ def patch_animals():
         animal_to_update = payload.get('animal')
         attributes = payload.get('attributes')
         devices = payload.get('devices')
-        id = int(animal_to_update['id'])
+        id = int(animal_to_update['id_animal'])
     except Exception:
         return jsonify(error='Invalid JSON.')
     validation = animals_validate_required(animal_to_update)
-    del animal_to_update['id']
+    del animal_to_update['id_animal']
     if validation['errors']:
         return jsonify(error={'name': 'invalid_model',
                               'errors': validation['errors']}), 400
@@ -202,19 +96,19 @@ def patch_animals():
 
     try:
         db.session.query(Animal).filter(
-            Animal.id == id).update(animal_to_update)
+            Animal.id_animal == id).update(animal_to_update)
         db.session.query(AnimalAttribute).filter(
-            AnimalAttribute.animal_id == id).delete()
+            AnimalAttribute.id_animal == id).delete()
         db.session.query(AnimalDevice).filter(
-            AnimalDevice.animal_id == id).delete()
+            AnimalDevice.id_animal == id).delete()
         if attributes:
             for attribute in attributes:
-                attribute['animal_id'] = id
+                attribute['id_animal'] = id
                 db.session.add(AnimalAttribute(**attribute))
 
         if devices:
             for device in devices:
-                device['animal_id'] = id
+                device['id_animal'] = id
                 db.session.add(AnimalDevice(**device))
         db.session.commit()
         return jsonify(animal.json())
@@ -229,7 +123,7 @@ def delete_animals():
     try:
         ids = request.args.getlist('id[]')
         for id in ids:
-            db.session.query(Animal).filter(Animal.id == int(id)).delete()
+            db.session.query(Animal).filter(Animal.id_animal == int(id)).delete()
             db.session.commit()
         return jsonify('success'), 200
     except Exception:
@@ -261,48 +155,22 @@ def animals_validate_required(animal):
     return True
 
 
-def animal_devices_validate_required(animal):
-    errors = []
-    for attr in ('start_at', 'end_at', 'animal_id', 'device_id'):
-        if not animal.get(attr, None):
-            errors.append({
-                'name': 'missing_attribute',
-                'table': 'animals',
-                'column': attr
-         })
-    if len(errors) >= 0:
-        return {'errors': errors}
-    return True
-
-
-def animal_attributes_validate_required(animal):
-    errors = []
-    for attr in ('value', 'animal_id', 'attribute_id'):
-        if not animal.get(attr, None):
-            errors.append({
-                'name': 'missing_attribute',
-                'table': 'animals',
-                'column': attr
-            })
-    if len(errors) >= 0:
-        return {'errors': errors}
-
-    return True
-
-
-@animals.route('/api/animals/device_available', methods=['POST'])
+@animals.route('/api/animals/device_available', methods=['GET'])
 @fnauth.check_auth(4)
-def check_devices_available():
+def check_devices_available(id=id):
     try:
-        device_id = request.get_json()
+        id_device = int(request.args.get('deviceId'))
+        id_animal = int(request.args.get('animalId'))
     except Exception:
         return jsonify(error='Invalid JSON.')
     try:
         now = datetime.now()
         device_exist = AnimalDevice.query.filter(
-            AnimalDevice.device_id == device_id).first()
-        if (device_exist and (device_exist.json().get('end_at') > now)):
-            return jsonify([device_id]), 200
+            AnimalDevice.id_device == id_device,
+            AnimalDevice.id_animal != id_animal,
+            ).first()     
+        if (device_exist and (not device_exist.json().get('date_end') or device_exist.json().get('date_end') > now)):
+            return jsonify([id_device]), 200
         return jsonify([]), 200
     except Exception:
         return jsonify(error='server error'), 500
