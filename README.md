@@ -14,28 +14,6 @@ Backoffice de FollowDem
 - Une liste des animaux, une des devices. Afficher, editer, supprimer, ajouter. 
 - Le détail d'un animal permet d'afficher ses associations à des devices, de les modifier et d'en ajouter.
 
-### Install database and packages dependencies
+### Install 
 
-#### Linux
-```sh
-sudo apt install postgresql postgresql-contrib libpq-dev postgresql-9.6-postgis-scripts git-all
-curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-python3 get-pip.py
-```
-```sql
-sudo -u postgres psql postgres
-CREATE DATABASE name_database;
-\c name_database
-CREATE EXTENSION postgis;
-CREATE EXTENSION postgis_topology;
-\q
-```
-```sh
-mkdir followdem-venv
-cd followdem-venv
-sudo /usr/bin/pip3 install virtualenv  # contemporary version:
-virtualenv -p python3 .                # python3 -m venv followdem-venv
-source ./followdem-venv/bin/activate
-pip install psycopg2-binary geoalchemy2 Flask flask_sqlalchemy flask_cors pyjwt Flask-Migrate
-# IOS: Applications/Python\ 3.6/Install\ Certificates.command
-```
+- Documentation d'installation : https://github.com/PnEcrins/FollowDem-admin/tree/master/docs/installation.rst

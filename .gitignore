@@ -1,2 +1,54 @@
-*.sh
+# virtualenv
+.venv
+venv/
+ENV/
+.idea/
+# Spyder project settings
+.spyderproject
+.spyproject
 
+# Rope project settings
+.ropeproject
+
+# mypy
+**//__pycache__
+.mypy_cache/
+__pycache__/
+*.py[cod]
+*$py.class
+# C extensions
+*.so
+
+.vscodedb
+.vscode
+credentials.py
+app_conf.py
+dba.py
+.venv/
+.env
+run.sh
+
+# System Files
+.DS_Store
+Thumbs.db
+*.pyc
+*.pyo
+*.swp
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+jsconfig.json
+
+# IDE - VSCode
+.vscode/*
+
+# Conf
+conf.py
+settings.ini
+var/log/*
