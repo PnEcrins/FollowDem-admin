@@ -21,9 +21,6 @@ SET row_security = off;
 CREATE SCHEMA followdem;
 
 
-ALTER SCHEMA followdem OWNER TO followdem;
-
-
 ------------
 -- TABLES --
 ------------

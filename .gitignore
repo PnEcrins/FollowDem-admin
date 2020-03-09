@@ -51,4 +51,5 @@ jsconfig.json
 # Conf
 conf.py
 settings.ini
-var/log/*
+var/log/*.log
+
