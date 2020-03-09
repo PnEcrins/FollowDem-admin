@@ -80,8 +80,9 @@ Import des données des capteurs (csv file)
 =========================================
 
 ::
-
-    python import.py file_path.csv
+    source venv/bin/activate
+    python3 import.py file_path.csv
+    deactivate
 
 
 Mode developpement
