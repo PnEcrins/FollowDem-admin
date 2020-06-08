@@ -144,12 +144,13 @@ def animals_validate_required(animal):
         name = animal.get('name').lower()
         name = name.strip()
         animal_exist = Animal.query.filter(Animal.name == name).first()
-        if (animal_exist and (animal_exist.json().get('id') != animal.get('id'))):
+        if (animal_exist and (animal_exist.json().get('id_animal') != animal.get('id'))):
             errors.append({
                 'name': 'attribute_already_exists',
                 'table': 'animals',
                 'column': 'name'
             })
+            print ('animal_exist', animal_exist)
     if len(errors) >= 0:
         return {'errors': errors}
     return True
@@ -160,9 +161,11 @@ def animals_validate_required(animal):
 def check_devices_available(id=id):
     try:
         id_device = int(request.args.get('deviceId'))
-        id_animal = int(request.args.get('animalId'))
     except Exception:
-        return jsonify(error='Invalid JSON.')
+        return jsonify(error='Invalid JSON.'),400
+    id_animal = request.args.get('animalId')
+    if id_animal:
+        id_animal = int(id_animal)
     try:
         now = datetime.now()
         device_exist = AnimalDevice.query.filter(

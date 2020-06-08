@@ -91,4 +91,4 @@ Mode developpement
 ::
 
     source venv/bin/activate
-    FLASK_APP=./appy FLASK_DEBUG=1 flask run
+    FLASK_APP=./app FLASK_DEBUG=1 flask run
