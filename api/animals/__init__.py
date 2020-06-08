@@ -150,7 +150,6 @@ def animals_validate_required(animal):
                 'table': 'animals',
                 'column': 'name'
             })
-            print ('animal_exist', animal_exist)
     if len(errors) >= 0:
         return {'errors': errors}
     return True
