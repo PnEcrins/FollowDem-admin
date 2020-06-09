@@ -123,12 +123,15 @@ def delete_animals():
     try:
         ids = request.args.getlist('id[]')
         for id in ids:
+            animal = db.session.query(Animal).filter(Animal.id_animal == id).first()
+            if len(animal.json().get('animal_devices')) > 0 :
+                return jsonify(msg= 'animal_has_devices'), 400
             db.session.query(Animal).filter(Animal.id_animal == int(id)).delete()
             db.session.commit()
         return jsonify('success'), 200
-    except Exception:
+    except Exception :
         traceback.print_exc()
-        return jsonify(error='Invalid JSON.'), 400
+        return jsonify(error= 'database error'), 500
 
 
 def animals_validate_required(animal):
@@ -144,7 +147,7 @@ def animals_validate_required(animal):
         name = animal.get('name').lower()
         name = name.strip()
         animal_exist = Animal.query.filter(Animal.name == name).first()
-        if (animal_exist and (animal_exist.json().get('id_animal') != animal.get('id'))):
+        if (animal_exist and (animal_exist.json().get('id_animal') != animal.get('id_animal'))):
             errors.append({
                 'name': 'attribute_already_exists',
                 'table': 'animals',
