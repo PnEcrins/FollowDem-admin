@@ -123,15 +123,17 @@ def delete_animals():
     try:
         ids = request.args.getlist('id[]')
         for id in ids:
-            animal = db.session.query(Animal).filter(Animal.id_animal == id).first()
-            if len(animal.json().get('animal_devices')) > 0 :
-                return jsonify(msg= 'animal_has_devices'), 400
-            db.session.query(Animal).filter(Animal.id_animal == int(id)).delete()
+            animal = db.session.query(Animal).filter(
+                Animal.id_animal == id).first()
+            if len(animal.json().get('animal_devices')) > 0:
+                return jsonify(msg='animal_has_devices'), 400
+            db.session.query(Animal).filter(
+                Animal.id_animal == int(id)).delete()
             db.session.commit()
         return jsonify('success'), 200
-    except Exception :
+    except Exception:
         traceback.print_exc()
-        return jsonify(error= 'database error'), 500
+        return jsonify(error='database error'), 500
 
 
 def animals_validate_required(animal):
@@ -160,22 +162,30 @@ def animals_validate_required(animal):
 
 @animals.route('/api/animals/device_available', methods=['GET'])
 @fnauth.check_auth(4)
-def check_devices_available(id=id):
+def check_devices_available():
     try:
         id_device = int(request.args.get('deviceId'))
+        id_animal = request.args.get('animalId')
+        start_date = request.args.get('startDate')
+        start_date = datetime.strptime(start_date, '%d/%m/%Y')
+        end_date = request.args.get('endDate')
     except Exception:
-        return jsonify(error='Invalid JSON.'),400
-    id_animal = request.args.get('animalId')
+        return jsonify(error='Invalid JSON.'), 400
     if id_animal:
         id_animal = int(id_animal)
+    if end_date:
+        end_date = datetime.strptime(end_date, '%d/%m/%Y')
     try:
-        now = datetime.now()
-        device_exist = AnimalDevice.query.filter(
+        devices_exist = AnimalDevice.query.filter(
             AnimalDevice.id_device == id_device,
             AnimalDevice.id_animal != id_animal,
-            ).first()     
-        if (device_exist and (not device_exist.json().get('date_end') or device_exist.json().get('date_end') > now)):
-            return jsonify([id_device]), 200
+        ).all()
+        for device in devices_exist:
+            if ((start_date > device.json().get('date_start') and not device.json().get('date_end')) or
+                (start_date > device.json().get('date_start') and device.json().get('date_end') > start_date) or
+                (start_date < device.json().get('date_start') and not end_date) or
+                    (start_date < device.json().get('date_start') and end_date > device.json().get('date_start'))):
+                return jsonify([id_device]), 200
         return jsonify([]), 200
     except Exception:
         return jsonify(error='server error'), 500
