@@ -28,8 +28,8 @@ class Animal(db.Model):
             'id_animal': self.id_animal,
             'name': self.name,
             'birth_year': self.birth_year,
-            'capture_date': self.capture_date.strftime('%d/%m/%Y'),
-            'death_date': self.death_date.strftime('%d/%m/%Y') if self.death_date else None ,
+            'capture_date': self.capture_date.strftime('%Y-%m-%d'),
+            'death_date': self.death_date.strftime('%Y-%m-%d') if self.death_date else None ,
             'comment': self.comment,
             'animal_devices': [animal_device.json() for animal_device in self.animal_devices],
             'animal_attributes': [animal_attribute.json() for animal_attribute in self.animal_attributes],
@@ -112,8 +112,8 @@ class AnimalDevice(db.Model):
     def json(self):
         return {
             'id_cor_ad': self.id_cor_ad,
-            'date_start': self.date_start.strftime('%d/%m/%Y'),
-            'date_end': self.date_end.strftime('%d/%m/%Y') if self.date_end else None,
+            'date_start': self.date_start.strftime('%Y-%m-%d'),
+            'date_end': self.date_end.strftime('%Y-%m-%d') if self.date_end else None,
             'comment': self.comment,
             'device': self.device.json()
         }

@@ -167,14 +167,14 @@ def check_devices_available():
         id_device = int(request.args.get('deviceId'))
         id_animal = request.args.get('animalId')
         start_date = request.args.get('startDate')
-        start_date = datetime.strptime(start_date, '%d/%m/%Y')
+        start_date = datetime.strptime(start_date, '%Y-%m-%d')
         end_date = request.args.get('endDate')
     except Exception:
         return jsonify(error='Invalid JSON.'), 400
     if id_animal:
         id_animal = int(id_animal)
     if end_date:
-        end_date = datetime.strptime(end_date, '%d/%m/%Y')
+        end_date = datetime.strptime(end_date, '%Y-%m-%d')
     try:
         devices_exist = AnimalDevice.query.filter(
             AnimalDevice.id_device == id_device,
@@ -183,10 +183,10 @@ def check_devices_available():
         for device in devices_exist:
             json_device = device.json()
             device_start = datetime.strptime(
-                json_device.get('date_start'), '%d/%m/%Y')
+                json_device.get('date_start'), '%Y-%m-%d')
             if json_device.get('date_end'):
                 device_end = datetime.strptime(
-                    json_device.get('date_end'), '%d/%m/%Y')
+                    json_device.get('date_end'), '%Y-%m-%d')
             if ((start_date >= device_start and not device_end) or
                 (device_start <= start_date <= device_end) or
                 (start_date <= device_start and not end_date) or
