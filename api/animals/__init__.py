@@ -182,6 +182,7 @@ def check_devices_available():
         ).all()
         for device in devices_exist:
             json_device = device.json()
+            device_end = None
             device_start = datetime.strptime(
                 json_device.get('date_start'), '%Y-%m-%d')
             if json_device.get('date_end'):
