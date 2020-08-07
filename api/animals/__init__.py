@@ -111,7 +111,7 @@ def patch_animals():
                 device['id_animal'] = id
                 db.session.add(AnimalDevice(**device))
         db.session.commit()
-        return jsonify(animal.json())
+        return jsonify('upadate ok')
     except (IntegrityError, Exception) as e:
         traceback.print_exc()
         db.session.rollback()
@@ -181,11 +181,17 @@ def check_devices_available():
             AnimalDevice.id_animal != id_animal,
         ).all()
         for device in devices_exist:
-            if ((start_date > device.json().get('date_start') and not device.json().get('date_end')) or
-                (start_date > device.json().get('date_start') and device.json().get('date_end') > start_date) or
-                (start_date < device.json().get('date_start') and not end_date) or
-                    (start_date < device.json().get('date_start') and end_date > device.json().get('date_start'))):
+            json_device = device.json()
+            device_start = datetime.strptime(
+                json_device.get('date_start'), '%d/%m/%Y')
+            if json_device.get('date_end'):
+                device_end = datetime.strptime(
+                    json_device.get('date_end'), '%d/%m/%Y')
+            if ((start_date >= device_start and not device_end) or
+                (device_start <= start_date <= device_end) or
+                (start_date <= device_start and not end_date) or
+                    (start_date <= device_start <= end_date)):
                 return jsonify([id_device]), 200
         return jsonify([]), 200
-    except Exception:
+    except Exception as e:
         return jsonify(error='server error'), 500
