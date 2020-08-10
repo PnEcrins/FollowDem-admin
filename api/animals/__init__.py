@@ -183,7 +183,7 @@ def check_devices_available():
         capture_date = datetime.strptime(
                     animal.get('capture_date'), '%Y-%m-%d')
         if (start_date < capture_date):
-            return jsonify('capture_date_error'), 409
+            return jsonify('conflict_capture_date'), 409
         try:
             animal_devices = AnimalDevice.query.filter(
                 AnimalDevice.id_animal == id_animal,
