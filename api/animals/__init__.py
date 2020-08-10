@@ -160,7 +160,7 @@ def animals_validate_required(animal):
     return True
 
 
-@animals.route('/api/animals/device_available', methods=['GET'])
+@animals.route('/api/animals/devices/date_available', methods=['GET'])
 @fnauth.check_auth(4)
 def check_devices_available():
     try:
@@ -169,12 +169,42 @@ def check_devices_available():
         start_date = request.args.get('startDate')
         start_date = datetime.strptime(start_date, '%Y-%m-%d')
         end_date = request.args.get('endDate')
+        id_cor_ad = request.args.get('id_cor_ad')
+
     except Exception:
         return jsonify(error='Invalid JSON.'), 400
-    if id_animal:
-        id_animal = int(id_animal)
+    if id_cor_ad:
+        id_cor_ad = int(id_cor_ad)
     if end_date:
         end_date = datetime.strptime(end_date, '%Y-%m-%d')
+    if id_animal:
+        id_animal = int(id_animal)
+        animal = Animal.query.get(id_animal).json()
+        capture_date = datetime.strptime(
+                    animal.get('capture_date'), '%Y-%m-%d')
+        if (start_date < capture_date):
+            return jsonify('capture_date_error'), 409
+        try:
+            animal_devices = AnimalDevice.query.filter(
+                AnimalDevice.id_animal == id_animal,
+                AnimalDevice.id_cor_ad != id_cor_ad
+            ).all()
+            for device in animal_devices:
+                json_device = device.json()
+                device_end = None
+                device_start = datetime.strptime(
+                    json_device.get('date_start'), '%Y-%m-%d')
+                if json_device.get('date_end'):
+                    device_end = datetime.strptime(
+                        json_device.get('date_end'), '%Y-%m-%d')
+                if ((start_date >= device_start and not device_end) or
+                    (device_start <= start_date <= device_end) or
+                    (start_date <= device_start and not end_date) or
+                        (start_date <= device_start <= end_date)):
+                    return jsonify('conflit_devices_date'), 409
+        except Exception as e:
+            return jsonify(error='server error'), 500
+    
     try:
         devices_exist = AnimalDevice.query.filter(
             AnimalDevice.id_device == id_device,
@@ -192,7 +222,7 @@ def check_devices_available():
                 (device_start <= start_date <= device_end) or
                 (start_date <= device_start and not end_date) or
                     (start_date <= device_start <= end_date)):
-                return jsonify([id_device]), 200
-        return jsonify([]), 200
+                return jsonify('device_used_by_anathor_animal'), 409
+        return jsonify('date_available'), 200
     except Exception as e:
         return jsonify(error='server error'), 500
