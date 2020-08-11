@@ -12,9 +12,10 @@ Installation de l'environnement logiciel
 
     sudo apt-get update
     sudo apt-get upgrade
-    sudo apt-get install postgresql postgresql-contrib postgis postgresql-9.6-postgis-2.3 postgresql-9.6-postgis-2.3-scripts
-    sudo apt-get install python3
-    sudo apt-get install python3-venv
+    sudo apt-get install postgresql-12
+    sudo apt-get install postgis postgresql-12-postgis-3
+    sudo apt-get install python3.6
+    sudo apt-get install python3.6-venv
 
 
 Création de la base de données PostgreSQL
@@ -70,7 +71,7 @@ Copier et éditer le fichier de configuration ``./conf.py.tpl``.
 
 ::
 
-  python3 -m venv venv
+  python3.6 -m venv venv
   source venv/bin/activate
   pip install -r ./requirements.txt
   deactivate
