@@ -65,7 +65,8 @@ CREATE TABLE followdem.t_animals (
     birth_year integer,
     capture_date timestamp without time zone,
     death_date timestamp without time zone,
-    comment text
+    comment text,
+    display BOOLEAN DEFAULT TRUE;
 );
 
 COMMENT ON TABLE followdem.t_animals IS 'Table contenant les animaux';

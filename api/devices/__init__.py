@@ -1,6 +1,6 @@
 from pypnusershub import routes as fnauth
 from flask import (Blueprint, jsonify, request)
-from models import Device,DeviceType, db
+from models import Device, DeviceType, AnimalDevice, db
 import traceback
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import func, desc, or_
@@ -81,7 +81,7 @@ def patch_Devices():
         del payload['id_device']
         db.session.query(Device).filter(Device.id_device == id).update(payload)
         db.session.commit()
-        return jsonify('update'),200
+        return jsonify('update'), 200
     except (IntegrityError, Exception) as e:
         traceback.print_exc()
         db.session.rollback()
@@ -93,12 +93,17 @@ def delete_Devices():
     try:
         ids = request.args.getlist('id[]')
         for id in ids:
-            db.session.query(Device).filter(Device.id_device == int(id)).delete()
+            device_used = db.session.query(AnimalDevice).filter(
+                AnimalDevice.id_device == id).first()
+            if device_used:
+                return jsonify(msg='device_used'), 400
+            db.session.query(Device).filter(
+                Device.id_device == int(id)).delete()
             db.session.commit()
         return jsonify('success'), 200
     except Exception:
         traceback.print_exc()
-        return jsonify(error='Invalid JSON.'), 400
+        return jsonify(error='database error'), 500
 
 
 def devices_validate_required(device):
@@ -114,11 +119,11 @@ def devices_validate_required(device):
     reference = reference.strip()
     device_exist = Device.query.filter(Device.ref_device == reference).first()
     if (device_exist and (device_exist.json().get('id_device') != device.get('id_device'))):
-          errors.append({
-                'name': 'device_already_exists',
-                'table': 'devices',
-                'column': attr
-            })
+        errors.append({
+            'name': 'device_already_exists',
+            'table': 'devices',
+            'column': attr
+        })
     if len(errors) >= 0:
         return {'errors': errors}
 
