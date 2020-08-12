@@ -5,6 +5,7 @@ INSTALLATION
     :target: http://www.ecrins-parcnational.fr
 
 
+
 Installation de l'environnement logiciel
 =========================================
 
@@ -16,6 +17,7 @@ Installation de l'environnement logiciel
     sudo apt-get install postgis postgresql-12-postgis-3
     sudo apt-get install python3.6
     sudo apt-get install python3.6-venv
+
 
 
 Création de la base de données PostgreSQL
@@ -55,6 +57,7 @@ Création de la base de données PostgreSQL
 
 Installation de l'application
 =========================================
+
 **1. Configuration de l'application :**
 
 Copier et éditer le fichier de configuration ``./conf.py.tpl``.
@@ -69,6 +72,7 @@ Copier et éditer le fichier de configuration ``./conf.py.tpl``.
 
 **2. installer l'application :**
 
+
 ::
 
   python3.6 -m venv venv
@@ -81,6 +85,7 @@ Import des données des capteurs (csv file)
 =========================================
 
 ::
+
     source venv/bin/activate
     python3 import.py file_path.csv
     deactivate
