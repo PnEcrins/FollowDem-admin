@@ -126,7 +126,7 @@ CREATE TABLE followdem.t_gps_data (
     longitude decimal,
     altitude decimal,
     dimension character varying(50),
-    accurate boolean
+    accurate boolean DEFAULT true
 );
 
 COMMENT ON TABLE followdem.t_gps_data IS 'Table listant les données GPS d\un device';
