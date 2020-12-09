@@ -91,6 +91,10 @@ Import des données des capteurs (csv file)
     deactivate
 
 
+Si les valeurs des champs ``lat``, ``lon``, ``altitude``, ``ttf`` et ``nb_sat`` de certaines lignes à importer sont vides, alors la valeur ``none`` est renseigné automatiquement et le champs ``accurate`` est renseigné à ``false``.
+
+Pour les autres, le champs ``accurate`` est renseigné à ``true`` par défaut dans la BDD. Il n'y a pas d'autres règles actuellement permettant de renseigner le champs ``accurate`` en fonction de la précision des données. 
+
 Mode developpement
 =========================================
 
